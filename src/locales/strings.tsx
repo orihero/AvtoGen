@@ -11,5 +11,13 @@ export let strings = new LocalizedStrings({
     authorize: 'Зарегестрироваться',
     findCarWash: 'Найти авто мойку',
     selectAuto: 'Выбрать автомобиль',
+    selectService: 'Выберите сервис',
+    selectTime: 'Выберите время',
+    next: 'Продолжить',
+    day: 'day',
+    month: 'month',
+    year: 'year',
+    time: 'time',
+    main: 'Главный',
   },
 });

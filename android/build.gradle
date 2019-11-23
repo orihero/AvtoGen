@@ -46,3 +46,4 @@ ext {
     playServicesVersion = "16.1.0" // or set latest version
     androidMapsUtilsVersion = "0.5+"
 }
+

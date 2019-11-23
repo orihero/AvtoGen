@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, LayoutAnimation} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  LayoutAnimation,
+  ScrollView,
+} from 'react-native';
 import {colors} from '../../constants/index';
 import RoundButton from '../../components/common/RoundButton';
 import RoundCheckbox, {
@@ -9,14 +15,16 @@ import {strings} from '../../locales/strings';
 import {Icons} from '../../constants/icons';
 import DefaultCheckbox from '../../components/common/DefaultCheckbox';
 import AnimatedButton from '../../components/common/AnimatedButton';
+import WheelPicker from './WheelPicker';
 
 interface FilterData {
-  data: Array<FilterItem>;
+  data: Array<FilterItem> | number;
+  title: string;
 }
 
 interface FilterItem {
   name: string;
-  icon: string;
+  icon?: string;
   index?: number;
   isLast?: boolean;
 }
@@ -36,6 +44,7 @@ checkboxes = [
       {icon: 'miniven', name: 'Минивен'},
       {icon: 'heavy', name: 'Грузовая'},
     ],
+    title: strings.selectAuto,
   },
   {
     backgroundColor: colors.ultraLightGray,
@@ -45,11 +54,26 @@ checkboxes = [
     activeColor: colors.white,
     size: 24,
     data: [
-      {icon: 'light', name: 'Легковая'},
-      {icon: 'jeep', name: 'Джип'},
-      {icon: 'miniven', name: 'Минивен'},
-      {icon: 'heavy', name: 'Грузовая'},
+      {
+        name: 'Бесконтактная мойка кузова автомобиля, коврики пороги',
+      },
+      {
+        name: 'Чистка салона пылесосом и влажная уборка пластмассовых деталей',
+      },
+      {
+        name: 'Чистка стекол изнутри химическими средствами',
+      },
+      {
+        name: 'Полировка пластмассовых деталей салона химическими средствами',
+      },
+      {
+        name: 'Мойка двигателя и моторного отсека, продувка',
+      },
+      {
+        name: 'Мойка двигателя и моторного отсека, продувка',
+      },
     ],
+    title: strings.selectService,
   },
   {
     backgroundColor: colors.ultraLightGray,
@@ -58,12 +82,8 @@ checkboxes = [
     activeBackColor: colors.accent,
     activeColor: colors.white,
     size: 28,
-    data: [
-      {icon: 'light', name: 'Легковая'},
-      {icon: 'jeep', name: 'Джип'},
-      {icon: 'miniven', name: 'Минивен'},
-      {icon: 'heavy', name: 'Грузовая'},
-    ],
+    data: 1,
+    title: strings.selectTime,
   },
 ];
 
@@ -74,14 +94,25 @@ let AutoFilter = ({icon, name, index, isLast}: FilterItem) => {
         styles.autoFilterContainer,
         isLast && {borderBottomColor: colors.accent, borderBottomWidth: 0.5},
       ]}>
-      <Icons
-        name={icon}
-        style={{width: 90}}
-        size={24 + index}
-        color={colors.accent}
-      />
+      {icon && (
+        <Icons
+          name={icon}
+          style={{width: 90}}
+          size={24 + index}
+          color={colors.accent}
+        />
+      )}
       <View style={styles.fill}>
-        <Text style={styles.autoFilterText}>{name}</Text>
+        <Text
+          style={[
+            styles.autoFilterText,
+            {
+              fontSize: icon ? 16 : 12,
+              fontWeight: icon ? 'regular' : 'bold',
+            },
+          ]}>
+          {name}
+        </Text>
       </View>
       <DefaultCheckbox />
     </View>
@@ -103,26 +134,35 @@ const CustomCard = ({onSubmit}: CustomCardProps) => {
     setLoading(true);
     setTimeout(() => setLoading(false), 1000);
   };
+  let shouldRender = active !== -1 && checkboxes[active];
   return (
     <View style={styles.card}>
-      {active !== -1 && checkboxes[active] && checkboxes[active].data && (
+      {shouldRender && checkboxes[active].data && (
         <View style={styles.dataWrapper}>
           <View style={styles.cardHeader}>
             <View style={styles.indicator} />
-            <Text style={styles.cardHeaderText}>{strings.selectAuto}</Text>
+            <Text style={styles.cardHeaderText}>
+              {checkboxes[active].title}
+            </Text>
           </View>
-          <View style={styles.filterWrapper}>
-            {checkboxes[active].data.map((e, index) => {
-              return (
-                <AutoFilter
-                  {...e}
-                  key={index}
-                  index={index}
-                  isLast={index == checkboxes[active].data.length - 1}
-                />
-              );
-            })}
-          </View>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={styles.filterWrapper}>
+            {checkboxes[active].data.length > 0 ? (
+              checkboxes[active].data.map((item, index) => {
+                return (
+                  <AutoFilter
+                    {...item}
+                    key={index}
+                    index={index}
+                    isLast={index == checkboxes[active].data.length - 1}
+                  />
+                );
+              })
+            ) : (
+              <WheelPicker />
+            )}
+          </ScrollView>
         </View>
       )}
       <View style={styles.initialWrapper}>
@@ -186,6 +226,7 @@ const styles = StyleSheet.create({
   },
   filterWrapper: {
     borderColor: colors.lightGray,
+    maxHeight: 250,
   },
   autoFilterText: {
     color: colors.accent,

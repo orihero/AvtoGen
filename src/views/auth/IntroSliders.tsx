@@ -15,6 +15,8 @@ import {commonStyles} from '../../constants/commonStyles';
 import logo1 from '../../assets/images/first-slider.png';
 import logo2 from '../../assets/images/second-slider.png';
 import logo3 from '../../assets/images/third-slider.png';
+import RoundButton from '../../components/common/RoundButton';
+import {strings} from '../../locales/strings';
 
 interface SliderProps {
   sliders: SliderData[];
@@ -27,6 +29,8 @@ export interface SliderData {
 interface SliderContentProps {
   slider: SliderData;
   index: number;
+  length: number;
+  onPress: Function;
 }
 
 interface PaginationProps {
@@ -36,7 +40,15 @@ interface PaginationProps {
 
 let {width, height} = Dimensions.get('window');
 
-const SliderContent = ({slider, index}: SliderContentProps) => {
+const SliderContent = ({
+  slider,
+  index,
+  length,
+  onPress,
+}: SliderContentProps) => {
+  if (index === length - 1) {
+    console.warn(index);
+  }
   return (
     <View style={styles.contentContainer} key={index}>
       <View style={commonStyles.centeredContainer}>
@@ -45,6 +57,15 @@ const SliderContent = ({slider, index}: SliderContentProps) => {
       <View style={[commonStyles.centeredContainer, styles.textContainer]}>
         <LogoWithText />
         <Text style={styles.text}>{slider.text}</Text>
+        {index === length - 1 && (
+          <RoundButton
+            text={strings.next}
+            fill
+            full
+            backgroundColor={colors.yellow}
+            onPress={onPress}
+          />
+        )}
       </View>
     </View>
   );
@@ -86,17 +107,18 @@ data.push({
 
 const Slider = ({sliders = data, navigation}: SliderProps) => {
   let value = new Animated.Value(0);
+
   return (
     <View style={styles.container}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={16}
-        onMomentumScrollEnd={() => {
-          setTimeout(() => {
-            navigation.navigate("Prompt")
-          }, 5000);
-        }}
+        // onMomentumScrollEnd={() => {
+        //   setTimeout(() => {
+        //     navigation.navigate('Prompt');
+        //   }, 5000);
+        // }}
         onScroll={Animated.event([
           {
             nativeEvent: {
@@ -108,7 +130,17 @@ const Slider = ({sliders = data, navigation}: SliderProps) => {
         ])}
         pagingEnabled>
         {sliders.map((e, index) => {
-          return <SliderContent slider={e} key={index} index={index} />;
+          return (
+            <SliderContent
+              slider={e}
+              key={index}
+              index={index}
+              length={sliders.length}
+              onPress={() => {
+                navigation.navigate('Prompt');
+              }}
+            />
+          );
         })}
       </ScrollView>
       <Pagination value={value} count={sliders.length} />

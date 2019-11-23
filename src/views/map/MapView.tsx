@@ -3,6 +3,9 @@ import {View, Text, StyleSheet, LayoutAnimation} from 'react-native';
 import MapView from 'react-native-maps';
 import customMapStyle from '../../configs/mapConfig.json';
 import CustomCard from './CustomCard';
+import Header from '../../components/Header';
+import {strings} from '../../locales/strings';
+import FoundCard from './FoundCard';
 
 interface Region {
   latitude: Number;
@@ -41,7 +44,6 @@ const CustomMap = () => {
     //     longitudeDelta: 0.0421,
     //   });
     // }
-    
   };
   return (
     <View style={styles.container}>
@@ -57,7 +59,12 @@ const CustomMap = () => {
         customMapStyle={customMapStyle}
         onMapReady={onMapReady}
       />
-      <CustomCard onSubmit={onSubmit} />
+      <Header text={strings.main} />
+
+      <FoundCard />
+
+      {/* there is a card */}
+      {/* <CustomCard onSubmit={onSubmit} /> */}
     </View>
   );
 };
