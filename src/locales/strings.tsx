@@ -19,5 +19,7 @@ export let strings = new LocalizedStrings({
     year: 'year',
     time: 'time',
     main: 'Главный',
+    route: 'Маршрут',
+    subscribe: 'Записаться',
   },
 });
