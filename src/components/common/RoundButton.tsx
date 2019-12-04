@@ -7,7 +7,10 @@ export interface RoundButtonProps {
   borderColor?: string;
   backgroundColor?: string;
   text?: string;
+  textColor?: string;
+  flex?: string;
   full?: boolean;
+  big?: boolean;
   onPress: Function;
 }
 
@@ -18,6 +21,9 @@ const RoundButton = ({
   text,
   full,
   onPress,
+  textColor,
+  big,
+  flex,
 }: RoundButtonProps) => {
   return (
     <TouchableWithoutFeedback onPress={onPress}>
@@ -26,9 +32,18 @@ const RoundButton = ({
           styles.base,
           fill && styles.fill,
           full && styles.full,
+          big && styles.big,
+          flex && {flex: 1},
           {backgroundColor, borderColor},
         ]}>
-        <Text style={[styles.textBase, fill && styles.textFill]}>{text}</Text>
+        <Text
+          style={[
+            styles.textBase,
+            fill && styles.textFill,
+            textColor && {color: textColor},
+          ]}>
+          {text}
+        </Text>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -37,11 +52,18 @@ const RoundButton = ({
 const styles = StyleSheet.create({
   base: {
     padding: 5,
-    paddingHorizontal: 15,
+    paddingHorizontal: 40,
     borderRadius: measures.borderRadius * 3,
     borderWidth: 1,
     borderColor: colors.white,
     margin: 5,
+    shadowOpacity: 0.33,
+    shadowColor: colors.extraGray,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    elevation: 2,
   },
   full: {
     justifyContent: 'center',
@@ -60,6 +82,13 @@ const styles = StyleSheet.create({
   },
   textFill: {
     color: colors.accent,
+  },
+  big: {
+    height: 50,
+    paddingHorizontal: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
   },
 });
 

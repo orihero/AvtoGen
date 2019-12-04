@@ -1,18 +1,25 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Icons} from '../../constants/icons';
+import {
+  Animated,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import {Icons as Comp} from '../../constants/icons';
 
 export interface RoundCheckboxProps {
-  color: string;
-  backgroundColor: string;
+  color: string | Animated.Value | Animated.AnimatedInterpolation;
+  backgroundColor: string | Animated.Value | Animated.AnimatedInterpolation;
   icon: string;
   size?: number;
   activeColor: string;
   activeBackColor: string;
-  index?: number;
+  index: number;
   parentIndex?: number;
   setActive?: Function;
 }
+
+let Icons = Animated.createAnimatedComponent(Comp);
 
 const RoundCheckbox = ({
   backgroundColor,
@@ -20,10 +27,10 @@ const RoundCheckbox = ({
   icon,
   size = 20,
   activeColor,
-  activeBackColor,
   setActive,
   index,
   parentIndex,
+  activeBackColor,
 }: RoundCheckboxProps) => {
   let isActive = parentIndex === index;
   return (
@@ -31,13 +38,20 @@ const RoundCheckbox = ({
       onPress={() => {
         setActive(index);
       }}>
-      <View
+      <Animated.View
         style={[
           styles.container,
-          isActive ? {backgroundColor: activeBackColor} : {backgroundColor},
+          {backgroundColor: isActive ? activeBackColor : backgroundColor},
         ]}>
-        <Icons name={icon} color={isActive ? activeColor : color} size={size} />
-      </View>
+        <Icons
+          name={icon}
+          size={size}
+          style={{
+            zIndex: 5,
+            color: isActive ? activeColor : color,
+          }}
+        />
+      </Animated.View>
     </TouchableWithoutFeedback>
   );
 };

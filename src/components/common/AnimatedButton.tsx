@@ -6,6 +6,7 @@ import {
   Animated,
   TouchableWithoutFeedback,
   LayoutAnimation,
+  ActivityIndicator,
 } from 'react-native';
 import {measures, colors} from '../../constants';
 
@@ -16,7 +17,10 @@ export interface AnimatedButtonProps {
   text?: string;
   full?: boolean;
   loading?: boolean;
+  bold?: boolean;
   onPress?: Function;
+  maxSize?: number;
+  minSize?: number;
 }
 
 const AnimatedButton = ({
@@ -27,14 +31,19 @@ const AnimatedButton = ({
   full,
   loading,
   onPress,
+  maxSize = 200,
+  minSize = 60,
+  bold,
 }: AnimatedButtonProps) => {
-  // let onLayout = ({nativeEvent}) => {
-  //   if (width === 0) {
-  //     console.warn(nativeEvent);
-  //     setWidth(nativeEvent.layout.width);
-  //   }
-  // };
-  let minSize = 30;
+  const [width, setWidth] = useState(maxSize);
+  const [expanded, setExpanded] = useState(false);
+  let onLayout = ({nativeEvent}) => {
+    if (width === 0) {
+      console.warn(nativeEvent);
+      setWidth(nativeEvent.layout.width);
+    }
+  };
+  let animation = new Animated.Value(width);
   // let animate = () => {
   //   Animated.spring(animation, {toValue: minSize});
   // };
@@ -54,28 +63,59 @@ const AnimatedButton = ({
       // revert();
     }
   }, [loading]);
+  let animate = () => {
+    Animated.timing(animation, {
+      duration: 100,
+      toValue: width === maxSize ? minSize : maxSize,
+    }).start(() => setWidth(width === maxSize ? minSize : maxSize));
+  };
+  let localPress = () => {
+    animate();
+    if (width === maxSize) {
+      setTimeout(() => {
+        animate();
+      }, 1000);
+    }
+    onPress();
+  };
+  let opacity = animation.interpolate({
+    inputRange: [minSize, maxSize],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
+  let height = animation.interpolate({
+    inputRange: [minSize, maxSize],
+    outputRange: [minSize, 55],
+  });
   return (
-    <TouchableWithoutFeedback onPress={onPress}>
-      <Animated.View>
-        <View
+    <TouchableWithoutFeedback onPress={localPress}>
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Animated.View
+          onLayout={onLayout}
           style={[
             styles.base,
             fill && styles.fill,
             full && styles.full,
-            {backgroundColor, borderColor},
+            {backgroundColor, borderColor, width: animation, height},
           ]}>
-          <Text>{text}</Text>
-        </View>
-        {/* <View style={[full && styles.full]} /> */}
-      </Animated.View>
+          <Animated.Text style={{opacity, fontWeight: bold ? 'bold' : '400'}}>
+            {text}
+          </Animated.Text>
+          {width === minSize && (
+            <View style={{position: 'absolute'}}>
+              <ActivityIndicator size={'large'} color={colors.accent} />
+            </View>
+          )}
+        </Animated.View>
+      </View>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   base: {
-    padding: 5,
-    paddingHorizontal: 15,
+    // padding: 5,
+    // paddingHorizontal: 15,
     borderRadius: measures.borderRadius * 3,
     borderWidth: 1,
     borderColor: colors.white,

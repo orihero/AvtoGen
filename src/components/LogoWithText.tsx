@@ -7,29 +7,24 @@ import {commonStyles} from '../constants/commonStyles';
 let {width, height} = Dimensions.get('window');
 
 export interface LogoWithTextProps {
-  dark: boolean;
+  dark?: boolean;
 }
 
-const LogoWithText = ({dark = true}: LogoWithTextProps) => {
+const LogoWithText = ({dark = false}: LogoWithTextProps) => {
   let source = dark
     ? require('../assets/images/dark-logo.png')
     : require('../assets/images/logo.png');
   return (
     <View style={[commonStyles.centeredContainer, {flex: null}]}>
       <Image source={source} style={styles.image} />
-      <Text style={styles.text(dark)}>{strings.autoGen}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  text: dark => ({
-    fontSize: 50,
-    color: !dark ? colors.white : colors.accent,
-  }),
   image: {
-    width: 177.6,
-    height: 38.4,
+    width: 180,
+    height: 180 / 1.24,
   },
 });
 

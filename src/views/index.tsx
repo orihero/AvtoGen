@@ -1,5 +1,4 @@
-import Sliders from './auth/IntroSliders';
 import CustomMap from './map/MapView';
-
+import Account from './settings/index';
 export * from './auth';
-export {Sliders, CustomMap};
+export {CustomMap, Account};

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,8 @@ import logo2 from '../../assets/images/second-slider.png';
 import logo3 from '../../assets/images/third-slider.png';
 import RoundButton from '../../components/common/RoundButton';
 import {strings} from '../../locales/strings';
+import CustomMap from '../map/MapView';
+import Prompt from './Prompt';
 
 interface SliderProps {
   sliders: SliderData[];
@@ -46,9 +48,6 @@ const SliderContent = ({
   length,
   onPress,
 }: SliderContentProps) => {
-  if (index === length - 1) {
-    console.warn(index);
-  }
   return (
     <View style={styles.contentContainer} key={index}>
       <View style={commonStyles.centeredContainer}>
@@ -56,16 +55,6 @@ const SliderContent = ({
       </View>
       <View style={[commonStyles.centeredContainer, styles.textContainer]}>
         <LogoWithText />
-        <Text style={styles.text}>{slider.text}</Text>
-        {index === length - 1 && (
-          <RoundButton
-            text={strings.next}
-            fill
-            full
-            backgroundColor={colors.yellow}
-            onPress={onPress}
-          />
-        )}
       </View>
     </View>
   );
@@ -80,8 +69,13 @@ const Pagination = ({value, count}: PaginationProps) => {
       extrapolate: 'clamp',
     });
   }
+  let bottom = value.interpolate({
+    inputRange: [-width, width * count - 2, width * count],
+    outputRange: [30, 30, -20],
+    extrapolate: 'clamp',
+  });
   return (
-    <View style={styles.paginationContainer}>
+    <Animated.View style={[styles.paginationContainer, {bottom}]}>
       {values.map((scale, index) => {
         return (
           <Animated.View
@@ -90,7 +84,7 @@ const Pagination = ({value, count}: PaginationProps) => {
           />
         );
       })}
-    </View>
+    </Animated.View>
   );
 };
 
@@ -107,18 +101,19 @@ data.push({
 
 const Slider = ({sliders = data, navigation}: SliderProps) => {
   let value = new Animated.Value(0);
-
+  const [scrollEnabled, setScrollEnabled] = useState(true);
   return (
     <View style={styles.container}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={16}
-        // onMomentumScrollEnd={() => {
-        //   setTimeout(() => {
-        //     navigation.navigate('Prompt');
-        //   }, 5000);
-        // }}
+        scrollEnabled={scrollEnabled}
+        onMomentumScrollEnd={event => {
+          setScrollEnabled(
+            event.nativeEvent.contentOffset.x !== sliders.length * width,
+          );
+        }}
         onScroll={Animated.event([
           {
             nativeEvent: {
@@ -142,6 +137,9 @@ const Slider = ({sliders = data, navigation}: SliderProps) => {
             />
           );
         })}
+        <View style={{width}}>
+          <Prompt navigation={navigation} />
+        </View>
       </ScrollView>
       <Pagination value={value} count={sliders.length} />
     </View>
@@ -156,7 +154,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: imageWidth,
-    height: imageWidth / 1.7,
+    height: imageWidth / 2.32,
   },
   textContainer: {
     justifyContent: 'flex-start',
@@ -173,7 +171,6 @@ const styles = StyleSheet.create({
   },
   paginationContainer: {
     position: 'absolute',
-    bottom: 30,
     flexDirection: 'row',
     justifyContent: 'center',
     width,
