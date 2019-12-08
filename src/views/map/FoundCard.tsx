@@ -53,50 +53,52 @@ const FoundCard = ({onPress}) => {
     extrapolate: 'clamp',
   });
   return (
-    <PanGestureHandler
-      onGestureEvent={onGestureEvent}
-      onHandlerStateChange={onHandlerStateChange}>
+    <View>
       <Animated.View>
         <View style={styles.container}>
-          <React.Fragment>
-            <View
-              style={{
-                alignItems: 'center',
-              }}>
-              <View style={styles.indicator}></View>
-            </View>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                if (isExpanded) {
-                  Animated.spring(height, {toValue: 0}).start(() => {
-                    isExpanded = false;
-                    height.setOffset(0);
-                    height.setValue(0);
-                  });
-                } else {
-                  Animated.spring(height, {toValue: -300}).start(() => {
-                    isExpanded = true;
-                    height.setOffset(-300);
-                    height.setValue(0);
-                  });
-                }
-              }}>
-              <View style={styles.top}>
-                <View style={styles.iconWrapper}>
-                  <Icons name="wash" size={40} />
-                </View>
-                <View style={styles.titleWrapper}>
-                  <Text style={styles.title}>AVTOritet Car-Wash</Text>
-                  <Text style={styles.location}>
-                    ул. Лабзак, 12/1, Tashkent
-                  </Text>
-                </View>
-                <View style={styles.distanceWrapper}>
-                  <Text style={styles.distance}>1.7 Km</Text>
-                </View>
+          <PanGestureHandler
+            onGestureEvent={onGestureEvent}
+            onHandlerStateChange={onHandlerStateChange}>
+            <View>
+              <View
+                style={{
+                  alignItems: 'center',
+                }}>
+                <View style={styles.indicator}></View>
               </View>
-            </TouchableWithoutFeedback>
-          </React.Fragment>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  if (isExpanded) {
+                    Animated.spring(height, {toValue: 0}).start(() => {
+                      isExpanded = false;
+                      height.setOffset(0);
+                      height.setValue(0);
+                    });
+                  } else {
+                    Animated.spring(height, {toValue: -300}).start(() => {
+                      isExpanded = true;
+                      height.setOffset(-300);
+                      height.setValue(0);
+                    });
+                  }
+                }}>
+                <View style={styles.top}>
+                  <View style={styles.iconWrapper}>
+                    <Icons name="wash" size={40} />
+                  </View>
+                  <View style={styles.titleWrapper}>
+                    <Text style={styles.title}>AVTOritet Car-Wash</Text>
+                    <Text style={styles.location}>
+                      ул. Лабзак, 12/1, Tashkent
+                    </Text>
+                  </View>
+                  <View style={styles.distanceWrapper}>
+                    <Text style={styles.distance}>1.7 Km</Text>
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </PanGestureHandler>
           <Animated.ScrollView
             showsVerticalScrollIndicator={false}
             style={{height: contentHeight, maxHeight: 300}}>
@@ -188,7 +190,7 @@ const FoundCard = ({onPress}) => {
           </View>
         </Animated.View>
       </Animated.View>
-    </PanGestureHandler>
+    </View>
   );
 };
 

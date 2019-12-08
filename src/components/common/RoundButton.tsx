@@ -16,7 +16,7 @@ export interface RoundButtonProps {
 
 const RoundButton = ({
   fill,
-  borderColor = colors.white,
+  borderColor = 'transparent',
   backgroundColor = 'transparent',
   text,
   full,

@@ -187,7 +187,7 @@ const CustomCard = ({onSubmit}: CustomCardProps) => {
               </Text>
             </View>
           </PanGestureHandler>
-          <Animated.View style={{height: contentHeight}}>
+          <Animated.View style={{height: contentHeight, flex: 1}}>
             <CardContent
               {...{
                 checkboxes,

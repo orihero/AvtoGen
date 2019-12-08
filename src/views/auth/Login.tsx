@@ -29,7 +29,6 @@ const Login = ({navigation}) => {
     if (confirmed) {
       const timer = window.setInterval(() => {
         setCounter(counter - 1); // <-- Change this line!
-        console.warn('wtf');
         if (counter <= 0) {
           setCounter(0);
           setConfirmed(false);

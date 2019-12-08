@@ -81,6 +81,8 @@ const WheelPicker = () => {
               <PickerItem label={value} value={i} key={i} />
             ))}
           </Picker>
+          <View style={styles.border} />
+          <View style={[styles.border, {left: '55%'}]} />
           <Text style={styles.pickerText}>{strings.hours}</Text>
         </View>
         <View style={styles.pickerWrapper}>
@@ -95,6 +97,8 @@ const WheelPicker = () => {
               <PickerItem label={value} value={i} key={i} />
             ))}
           </Picker>
+          <View style={styles.border} />
+          <View style={[styles.border, {left: '45%'}]} />
           <Text style={styles.pickerText}>{strings.minutes}</Text>
         </View>
       </View>
@@ -107,6 +111,14 @@ const styles = StyleSheet.create({
     padding: 30,
     paddingTop: 20,
   },
+  border: {
+    position: 'absolute',
+    backgroundColor: colors.darkGray,
+    height: 40,
+    width: 2,
+    borderRadius: 1,
+    top: 40,
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -117,8 +129,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     width: 40,
-    height: Platform.OS === 'android' ? 120 : 30,
-    borderWidth: 1,
+    height: Platform.OS === 'android' ? 118 : 30,
   },
   pickerText: {
     color: colors.extraGray,

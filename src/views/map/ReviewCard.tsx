@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingHorizontal: 40,
     borderRadius: 30,
-    maxHeight: 550,
+    maxHeight: 700,
   },
   contentContainer: {
     justifyContent: 'center',

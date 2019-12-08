@@ -7,14 +7,27 @@ import {
   TextInput,
   Dimensions,
   Animated,
+  Platform,
 } from 'react-native';
 import {Icons} from '../constants/icons';
 import {colors} from '../constants/colors';
 import {isIphoneXorAbove} from '../utils/application';
 
+interface HeaderProps {
+  text: string;
+  isBack: boolean;
+  backPress: Function;
+  menuPress: Function;
+}
+
 let fromValue = isIphoneXorAbove() ? 40 : 5;
 let toValue = fromValue + 60;
-const Header = ({text, isBack, backPress = () => {}, menuPress = () => {}}) => {
+const Header = ({
+  text,
+  isBack,
+  backPress = () => {},
+  menuPress = () => {},
+}: HeaderProps) => {
   let top = new Animated.Value(fromValue);
   const [expanded, setExpanded] = useState(fromValue);
   return (

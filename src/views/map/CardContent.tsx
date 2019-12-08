@@ -44,7 +44,6 @@ const CardContent = ({
         snapToInterval={width}
         contentContainerStyle={{
           width: width * checkboxes.length,
-          maxHeight: 220,
         }}
         onScroll={onScroll}
         decelerationRate={0.99}

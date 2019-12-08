@@ -26,7 +26,6 @@ let AutoFilter = ({
       <View
         style={[
           styles.autoFilterContainer,
-          isLast && {borderBottomColor: colors.accent, borderBottomWidth: 0.5},
         ]}>
         {icon && (
           <Icons
@@ -56,8 +55,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     paddingHorizontal: 20,
     paddingVertical: 15,
-    borderTopWidth: 0.5,
-    borderColor: colors.accent,
+    borderBottomWidth: 0.5,
+    borderColor: colors.extraGray,
     alignItems: 'center',
   },
   autoFilterText: {
