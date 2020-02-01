@@ -10,4 +10,5 @@ export const colors = {
   ultraLightGray: '#F4F4F6',
   lightBlue: '#3FE0CA',
   lightYellow: '#FFE622',
+  red:'#C10920'
 };

@@ -49,5 +49,9 @@ export let strings = new LocalizedStrings({
     skip: 'Пропустить',
     confirmCode: `Введите присланный вам
 смс код `,
+    second: 'сек',
+    connectionError: "Соединение прервано",
+    somethingWentWrong: 'Что то пошло не так!',
+    fillAllFields:'Заполните все поля'
   },
 });

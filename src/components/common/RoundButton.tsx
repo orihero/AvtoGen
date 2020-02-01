@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {measures, colors} from '../../constants';
+import { View, Text, StyleSheet, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
+import { measures, colors } from '../../constants';
 
 export interface RoundButtonProps {
   fill?: boolean;
@@ -12,6 +12,7 @@ export interface RoundButtonProps {
   full?: boolean;
   big?: boolean;
   onPress: Function;
+  loading: boolean;
 }
 
 const RoundButton = ({
@@ -24,6 +25,7 @@ const RoundButton = ({
   textColor,
   big,
   flex,
+  loading = false
 }: RoundButtonProps) => {
   return (
     <TouchableWithoutFeedback onPress={onPress}>
@@ -33,17 +35,17 @@ const RoundButton = ({
           fill && styles.fill,
           full && styles.full,
           big && styles.big,
-          flex && {flex: 1},
-          {backgroundColor, borderColor},
+          flex && { flex: 1 },
+          { backgroundColor, borderColor },
         ]}>
-        <Text
+        {loading ? <ActivityIndicator color={colors.accent} /> : <Text
           style={[
             styles.textBase,
             fill && styles.textFill,
-            textColor && {color: textColor},
+            textColor && { color: textColor },
           ]}>
           {text}
-        </Text>
+        </Text>}
       </View>
     </TouchableWithoutFeedback>
   );

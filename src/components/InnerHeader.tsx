@@ -1,16 +1,10 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Platform,
-  StatusBar,
-} from 'react-native';
-import {Icons, colors} from '../constants';
-import {strings} from '../locales/strings';
-import {HeaderBackButton} from 'react-navigation-stack';
+import { Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
+import { HeaderBackButton } from 'react-navigation-stack';
+import { colors } from '../constants';
+import { strings } from '../locales/strings';
+import { withNavigation } from 'react-navigation';
 
 const InnerHeader = ({
   navigation,
@@ -22,19 +16,20 @@ const InnerHeader = ({
     <SafeAreaView
       style={[
         styles.container,
-        transparent && {backgroundColor: colors.ultraLightGray},
+        transparent && { backgroundColor: colors.ultraLightGray },
+        !back && { paddingTop: 15 }
       ]}>
       {Platform.OS === 'ios' && <StatusBar barStyle="light-content" />}
       <View style={styles.header}>
-        <View style={[styles.side, {marginLeft: -15}]}>
+        {back ? <View style={[styles.side, { marginLeft: -15 }]}>
           <HeaderBackButton
             tintColor={colors.darkGray}
             onPress={() => {
-              if (back) navigation.navigate(back);
-              else navigation.goBack();
+              // if (back) navigation.navigate(back);
+              navigation.goBack();
             }}
           />
-        </View>
+        </View> : <View style={styles.side} />}
         <View style={styles.headerMiddle}>
           <Text style={styles.headerText}>{title}</Text>
         </View>
@@ -78,4 +73,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InnerHeader;
+export default withNavigation(InnerHeader);

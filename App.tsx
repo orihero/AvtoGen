@@ -1,8 +1,9 @@
-import React, {useEffect} from 'react';
-import {View, StyleSheet, StatusBar, Platform, UIManager} from 'react-native';
+import React, { useEffect } from 'react';
+import { Platform, StatusBar, StyleSheet, UIManager, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import configureStore from './src/redux/configureStore';
 import AppRouter from './src/routes/AppRouter';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import SafeAreaView from 'react-native-safe-area-view';
 
 const App = () => {
   useEffect(() => {
@@ -12,11 +13,14 @@ const App = () => {
       }
     }
   }, []);
+  let store = configureStore();
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
         {Platform.OS === 'ios' && <StatusBar barStyle="light-content" />}
-        <AppRouter />
+        <Provider store={store}>
+          <AppRouter />
+        </Provider>
       </View>
     </SafeAreaProvider>
   );

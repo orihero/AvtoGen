@@ -1,17 +1,8 @@
-import React, {useState, Fragment} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  TextInput,
-  Dimensions,
-  Animated,
-  Platform,
-} from 'react-native';
-import {Icons} from '../constants/icons';
-import {colors} from '../constants/colors';
-import {isIphoneXorAbove} from '../utils/application';
+import React, { Fragment, useState } from 'react';
+import { Animated, Dimensions, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { colors } from '../constants/colors';
+import { Icons } from '../constants/icons';
+import { isIphoneXorAbove } from '../utils/application';
 
 interface HeaderProps {
   text: string;
@@ -25,8 +16,8 @@ let toValue = fromValue + 60;
 const Header = ({
   text,
   isBack,
-  backPress = () => {},
-  menuPress = () => {},
+  backPress = () => { },
+  menuPress = () => { },
 }: HeaderProps) => {
   let top = new Animated.Value(fromValue);
   const [expanded, setExpanded] = useState(fromValue);
