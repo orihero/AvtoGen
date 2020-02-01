@@ -23,7 +23,60 @@ const Login = ({ navigation, userLoggedIn }) => {
   const [error, setError] = useState('');
   const [data, setData] = useState('');
   const [code, setCode] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  let count = 0;
+
+  let getCode = () => {
+    if (value.length < 9) {
+      setError(strings.fillAllFields)
+      return;
+    }
+    requests.auth.login({ phone: '998' + value }).then(res => {
+      console.warn(res.data.data);
+      setData(res.data.data)
+    }).catch(res => {
+      if (!res.response) {
+        console.warn(res);
+        setError(strings.connectionError)
+        return
+      }
+      let { response } = res;
+      if (response.data) {
+        setError(response.data.message ? response.data.message : strings.somethingWentWrong)
+        return;
+      }
+      setError(strings.somethingWentWrong)
+    });
+    setConfirmed(!confirmed);
+  }
+
+  let confirmCode = () => {
+    if (code.length < 5) {
+      setError(strings.fillAllFields)
+      return;
+    }
+    setLoading(true)
+    // console.warn(data);
+    requests.auth.verifyCode(data.user_id, { code })
+      .then(res => {
+        userLoggedIn(res.data.data);
+        navigation.navigate('SelectLanguage');
+      })
+      .catch(res => {
+        if (!res.response) {
+          console.warn(res);
+          setError(strings.connectionError)
+          return
+        }
+        let { response } = res;
+        if (response.data) {
+          setError(response.data.message ? response.data.message : strings.somethingWentWrong)
+          return;
+        }
+        setError(strings.somethingWentWrong)
+      }).finally(() => setLoading(false))
+  }
+
   useEffect(() => {
     if (error !== '') {
       setError('')
@@ -47,7 +100,7 @@ const Login = ({ navigation, userLoggedIn }) => {
       setCounter(60);
     }
   });
-  let count = 0;
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.infoWrapper}>
@@ -121,55 +174,13 @@ const Login = ({ navigation, userLoggedIn }) => {
           text={strings.confirm}
           fill
           full
+          loading={loading}
           backgroundColor={colors.white}
           onPress={() => {
             if (confirmed) {
-              if (code.length < 5) {
-                setError(strings.fillAllFields)
-                return;
-              }
-              // console.warn(data);
-              requests.auth.verifyCode(data.user_id, { code })
-                .then(res => {
-                  userLoggedIn(res.data.data);
-                  navigation.navigate('SelectLanguage');
-                  console.warn(res.data);
-                })
-                .catch(res => {
-                  if (!res.response) {
-                    console.warn(res);
-                    setError(strings.connectionError)
-                    return
-                  }
-                  let { response } = res;
-                  if (response.data) {
-                    setError(response.data.message ? response.data.message : strings.somethingWentWrong)
-                    return;
-                  }
-                  setError(strings.somethingWentWrong)
-                })
+              confirmCode()
             } else {
-              if (value.length < 9) {
-                setError(strings.fillAllFields)
-                return;
-              }
-              requests.auth.login({ phone: '998' + value }).then(res => {
-                console.warn(res.data.data);
-                setData(res.data.data)
-              }).catch(res => {
-                if (!res.response) {
-                  console.warn(res);
-                  setError(strings.connectionError)
-                  return
-                }
-                let { response } = res;
-                if (response.data) {
-                  setError(response.data.message ? response.data.message : strings.somethingWentWrong)
-                  return;
-                }
-                setError(strings.somethingWentWrong)
-              });
-              setConfirmed(!confirmed);
+              getCode()
             }
           }}
         />

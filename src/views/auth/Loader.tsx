@@ -1,15 +1,20 @@
-import React, { useEffect } from 'react'
-import { View, StyleSheet, Image } from 'react-native';
-import { colors } from '../../constants';
-import logo from '../../assets/images/logo-light.png'
-import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
-import requests from '../../api/requests';
-import { userLoaded } from '../../redux/actions'
+import React, { useEffect } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
+import logo from '../../assets/images/logo-light.png';
+import { colors } from '../../constants';
+import { strings } from '../../locales/strings';
+import { userLoaded } from '../../redux/actions';
 
-const Loader = ({ navigation }) => {
+const Loader = ({ navigation, userLoaded }) => {
     let bootstrap = async () => {
-        let userData = await AsyncStorage.getItem('@user');
+        let data = await AsyncStorage.getItem('@user');
+        if (!data) {
+            navigation.navigate('PromptStack')
+            return
+        }
+        let userData = JSON.parse(data);
         console.warn(userData);
         if (!userData || !userData.token) {
             navigation.navigate('PromptStack')
@@ -20,7 +25,9 @@ const Loader = ({ navigation }) => {
             navigation.navigate('PromptStack')
             return
         }
-        
+        strings.setLanguage(settings.language);
+        userLoaded(userData);
+        navigation.navigate('Main')
     }
     useEffect(() => {
         bootstrap();
