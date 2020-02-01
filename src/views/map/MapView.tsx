@@ -1,24 +1,14 @@
-import React, {useState, createRef} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  LayoutAnimation,
-  Image,
-  TouchableWithoutFeedback,
-  Platform,
-  StatusBar,
-} from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
-import customMapStyle from '../../configs/mapConfig.json';
-import CustomCard from './CustomCard';
-import Header from '../../components/Header';
-import {strings} from '../../locales/strings';
-import FoundCard from './FoundCard';
+import React, { useState, useEffect } from 'react';
+import { Image, LayoutAnimation, Platform, StatusBar, StyleSheet, View } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 import markerIcon from '../../assets/images/marker.png';
 import selectedMarker from '../../assets/images/selectedMarker.png';
+import Header from '../../components/Header';
+import { strings } from '../../locales/strings';
+import CustomCard from './CustomCard';
+import FoundCard from './FoundCard';
 import ReviewCard from './ReviewCard';
-import SafeAreaView from 'react-native-safe-area-view';
+import requests from '../../api/requests';
 
 interface Region {
   latitude: Number;
@@ -27,33 +17,17 @@ interface Region {
   longitudeDelta: Number;
 }
 
-const CustomMap = ({navigation}) => {
+const CustomMap = ({ navigation }) => {
   let map;
   const [cardVisible, setCardVisible] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const [markers, setmarkers] = useState([
-    {
-      coordinate: {
-        latitude: 41.28959022,
-        longitude: 69.1392858,
-      },
-      title: 'AVTOritet Branch-1',
-    },
-    {
-      coordinate: {
-        latitude: 41.26251321,
-        longitude: 69.159289,
-      },
-      title: 'AVTOritet branch-2',
-    },
-    {
-      coordinate: {
-        latitude: 41.28651431,
-        longitude: 69.199281,
-      },
-      title: 'AVTOritet branch-3',
-    },
+  const [markers, setMarkers] = useState([
   ]);
+  useEffect(() => {
+    requests.main.companies().then(res => {
+      setMarkers(res.data.data)
+    })
+  }, [])
   const [activeMarker, setactiveMarker] = useState(-1);
   let onMapReady = () => {
     LayoutAnimation.configureNext(
@@ -104,11 +78,11 @@ const CustomMap = ({navigation}) => {
             return (
               <Marker
                 key={i}
-                coordinate={e.coordinate}
+                coordinate={{ latitude: parseFloat(e.location_lat), longitude: parseFloat(e.location_lng) }}
                 title={e.title}
                 onPress={() => {
                   map.animateToRegion({
-                    ...e.coordinate,
+                    ...{ latitude: parseFloat(e.location_lat), longitude: parseFloat(e.location_lng) },
                     latitudeDelta: 0.1,
                     longitudeDelta: 0.1,
                   });
@@ -140,16 +114,20 @@ const CustomMap = ({navigation}) => {
         isBack={activeMarker !== -1}
       />
       {cardVisible && <CustomCard onSubmit={onSubmit} />}
-      {activeMarker !== -1 && !subscribed && (
-        <FoundCard onPress={() => setSubscribed(true)} />
-      )}
-      {subscribed && (
-        <ReviewCard
-          navigation={navigation}
-          onSubmit={() => setSubscribed(false)}
-        />
-      )}
-    </View>
+      {
+        activeMarker !== -1 && !subscribed && (
+          <FoundCard current={markers.length > 0 && activeMarker !== -1 ? markers[activeMarker] : null} onPress={() => setSubscribed(true)} />
+        )
+      }
+      {
+        subscribed && (
+          <ReviewCard
+            navigation={navigation}
+            onSubmit={() => setSubscribed(false)}
+          />
+        )
+      }
+    </View >
   );
 };
 

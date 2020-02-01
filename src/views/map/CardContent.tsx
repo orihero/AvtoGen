@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Dimensions, Platform} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Dimensions, Platform } from 'react-native';
 import AutoFilterContainer from './AutoFilterContainer';
 import WheelPicker from './WheelPicker';
 import AutoFilter from './AutoFilter';
@@ -23,7 +23,7 @@ const {
   Extrapolate,
 } = Animated;
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const CardContent = ({
   checkboxes,
@@ -32,10 +32,12 @@ const CardContent = ({
   childStates,
   scrollRef,
   onScroll,
+  services,
+  service
 }) => {
   let shouldRender = active !== -1 && checkboxes[active];
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <Animated.ScrollView
         scrollEnabled={false}
         ref={scrollRef}
@@ -63,7 +65,7 @@ const CardContent = ({
                   key={i}
                   proceed={proceed}
                   childStates={childStates}>
-                  {e.data.map((item, index) => {
+                  {(service ? services : e.data).map((item, index) => {
                     return (
                       <AutoFilter
                         {...item}
@@ -75,8 +77,8 @@ const CardContent = ({
                   })}
                 </AutoFilterContainer>
               ) : (
-                <WheelPicker />
-              )}
+                  <WheelPicker />
+                )}
             </ScrollView>
           );
         })}

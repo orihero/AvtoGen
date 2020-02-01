@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,14 +8,17 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import {colors} from '../../constants/colors';
-import {Icons} from '../../constants/icons';
+import { colors } from '../../constants/colors';
+import { Icons } from '../../constants/icons';
 import RoundButton from '../../components/common/RoundButton';
-import {strings} from '../../locales/strings';
-import {PanGestureHandler, State} from 'react-native-gesture-handler';
+import { strings } from '../../locales/strings';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Text from '../../components/common/CustomText';
-const FoundCard = ({onPress}) => {
+const FoundCard = ({ onPress, current }) => {
   let isExpanded = false;
+  if (!current) {
+    return null;
+  }
   const [expanded, setExpanded] = useState(false);
   let height = new Animated.Value(0);
   let onGestureEvent = Animated.event([
@@ -25,16 +28,16 @@ const FoundCard = ({onPress}) => {
       },
     },
   ]);
-  let onHandlerStateChange = ({nativeEvent}) => {
+  let onHandlerStateChange = ({ nativeEvent }) => {
     if (nativeEvent.oldState === State.ACTIVE) {
       if (nativeEvent.translationY > 0) {
-        Animated.spring(height, {toValue: 300}).start(() => {
+        Animated.spring(height, { toValue: 300 }).start(() => {
           isExpanded = false;
           height.setOffset(0);
           height.setValue(0);
         });
       } else {
-        Animated.spring(height, {toValue: -300}).start(() => {
+        Animated.spring(height, { toValue: -300 }).start(() => {
           isExpanded = true;
           height.setOffset(-300);
           height.setValue(0);
@@ -69,13 +72,13 @@ const FoundCard = ({onPress}) => {
               <TouchableWithoutFeedback
                 onPress={() => {
                   if (isExpanded) {
-                    Animated.spring(height, {toValue: 0}).start(() => {
+                    Animated.spring(height, { toValue: 0 }).start(() => {
                       isExpanded = false;
                       height.setOffset(0);
                       height.setValue(0);
                     });
                   } else {
-                    Animated.spring(height, {toValue: -300}).start(() => {
+                    Animated.spring(height, { toValue: -300 }).start(() => {
                       isExpanded = true;
                       height.setOffset(-300);
                       height.setValue(0);
@@ -87,9 +90,9 @@ const FoundCard = ({onPress}) => {
                     <Icons name="wash" size={40} />
                   </View>
                   <View style={styles.titleWrapper}>
-                    <Text style={styles.title}>AVTOritet Car-Wash</Text>
+                    <Text style={styles.title}>{current.title}</Text>
                     <Text style={styles.location}>
-                      ул. Лабзак, 12/1, Tashkent
+                      {current.company_address}
                     </Text>
                   </View>
                   <View style={styles.distanceWrapper}>
@@ -101,7 +104,7 @@ const FoundCard = ({onPress}) => {
           </PanGestureHandler>
           <Animated.ScrollView
             showsVerticalScrollIndicator={false}
-            style={{height: contentHeight, maxHeight: 300}}>
+            style={{ height: contentHeight, maxHeight: 300 }}>
             <View style={styles.content}>
               <View style={styles.borderTop}>
                 <Text style={styles.mainText}>8 97 444 07 50</Text>
@@ -126,7 +129,7 @@ const FoundCard = ({onPress}) => {
                     <Icons
                       name="down-chevron"
                       style={{
-                        transform: [{rotate: expanded ? '180deg' : '0deg'}],
+                        transform: [{ rotate: expanded ? '180deg' : '0deg' }],
                       }}
                     />
                   </View>
@@ -168,8 +171,8 @@ const FoundCard = ({onPress}) => {
             </View>
           </Animated.ScrollView>
         </View>
-        <Animated.View style={[styles.row, {transform: [{translateY}]}]}>
-          <View style={{flex: 1}}>
+        <Animated.View style={[styles.row, { transform: [{ translateY }] }]}>
+          <View style={{ flex: 1 }}>
             <RoundButton
               borderColor={colors.black}
               backgroundColor={colors.white}
@@ -179,7 +182,7 @@ const FoundCard = ({onPress}) => {
               onPress={onPress}
             />
           </View>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <RoundButton
               onPress={onPress}
               fill
@@ -195,7 +198,7 @@ const FoundCard = ({onPress}) => {
 };
 
 const styles = StyleSheet.create({
-  row: {flexDirection: 'row'},
+  row: { flexDirection: 'row' },
   container: {
     backgroundColor: colors.white,
     position: 'absolute',

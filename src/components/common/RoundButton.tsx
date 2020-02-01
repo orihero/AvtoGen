@@ -11,8 +11,8 @@ export interface RoundButtonProps {
   flex?: string;
   full?: boolean;
   big?: boolean;
-  onPress: Function;
-  loading: boolean;
+  onPress?: Function;
+  loading?: boolean;
 }
 
 const RoundButton = ({
