@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,21 +8,22 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {colors} from '../../constants/index';
+import { colors } from '../../constants/index';
 import RoundButton from '../../components/common/RoundButton';
 import RoundCheckbox, {
   RoundCheckboxProps,
 } from '../../components/common/RoundCheckbox';
-import {strings} from '../../locales/strings';
-import {Icons} from '../../constants/icons';
+import { strings } from '../../locales/strings';
+import { Icons } from '../../constants/icons';
 import DefaultCheckbox from '../../components/common/DefaultCheckbox';
 import AnimatedButton from '../../components/common/AnimatedButton';
 import WheelPicker from './WheelPicker';
 import AutoFilterContainer from './AutoFilterContainer';
-import {PanGestureHandler, State} from 'react-native-gesture-handler';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Text from '../../components/common/CustomText';
 import CardContent from './CardContent';
-import {FilterItem} from './AutoFilter';
+import { FilterItem } from './AutoFilter';
+import requests from '../../api/requests';
 
 interface FilterData {
   data: Array<FilterItem> | number;
@@ -39,10 +40,10 @@ checkboxes = [
     activeColor: colors.white,
     size: 20,
     data: [
-      {icon: 'light', name: 'Легковая'},
-      {icon: 'jeep', name: 'Джип'},
-      {icon: 'miniven', name: 'Минивен'},
-      {icon: 'heavy', name: 'Грузовая'},
+      { icon: 'light', name: 'Легковая' },
+      { icon: 'jeep', name: 'Джип' },
+      { icon: 'miniven', name: 'Минивен' },
+      { icon: 'heavy', name: 'Грузовая' },
     ],
     title: strings.selectAuto,
   },
@@ -74,6 +75,7 @@ checkboxes = [
       },
     ],
     title: strings.selectService,
+    services: true
   },
   {
     backgroundColor: colors.ultraLightGray,
@@ -98,23 +100,29 @@ let changeValueAt = (source, value, index) => {
     .concat(source.substr(index + 1, source.length));
 };
 
-const CustomCard = ({onSubmit}: CustomCardProps) => {
+const CustomCard = ({ onSubmit }: CustomCardProps) => {
   const [active, setActive] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [childStates, setChildStates] = useState('00');
-  let isExpanded = false;
+  const [services, setServices] = useState([])
   let animation = new Animated.Value(0);
   let scroll;
   useEffect(() => {
-    if (scroll) {
-      setTimeout(
-        () =>
+    requests.main.services().then(res => {
+      setServices(res.data.data)
+    })
+  }, [])
+  useEffect(() => {
+    setTimeout(
+      () => {
+        if (scroll && scroll._component) {
           scroll._component.scrollTo({
             x: active * Dimensions.get('window').width,
-          }),
-        200,
-      );
-    }
+          })
+        }
+      },
+      200,
+    );
   }, [active]);
   const selectFilter = index => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -149,16 +157,16 @@ const CustomCard = ({onSubmit}: CustomCardProps) => {
       },
     },
   ]);
-  let onHandlerStateChange = ({nativeEvent}) => {
+  let onHandlerStateChange = ({ nativeEvent }) => {
     if (nativeEvent.oldState === State.ACTIVE) {
       if (nativeEvent.translationY < 0) {
-        Animated.spring(height, {toValue: -wHeight}).start(() => {
+        Animated.spring(height, { toValue: -wHeight }).start(() => {
           isExpanded = true;
           height.setOffset(-wHeight);
           height.setValue(0);
         });
       } else {
-        Animated.spring(height, {toValue: wHeight}).start(() => {
+        Animated.spring(height, { toValue: wHeight }).start(() => {
           isExpanded = false;
           height.setOffset(0);
           height.setValue(0);
@@ -187,7 +195,7 @@ const CustomCard = ({onSubmit}: CustomCardProps) => {
               </Text>
             </View>
           </PanGestureHandler>
-          <Animated.View style={{height: contentHeight, flex: 1}}>
+          <Animated.View style={{ height: contentHeight, flex: 1 }}>
             <CardContent
               {...{
                 checkboxes,
@@ -196,6 +204,7 @@ const CustomCard = ({onSubmit}: CustomCardProps) => {
                 childStates,
                 onScroll,
                 scrollRef: r => (scroll = r),
+                services
               }}
             />
           </Animated.View>

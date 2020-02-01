@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, TouchableWithoutFeedback, StyleSheet} from 'react-native';
-import {colors, Icons} from '../../constants';
+import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { colors, Icons } from '../../constants';
 import DefaultCheckbox from '../../components/common/DefaultCheckbox';
 
 export interface FilterItem {
@@ -19,6 +19,7 @@ let AutoFilter = ({
   isLast,
   setActive,
   isActive,
+  title,
   ...rest
 }: FilterItem) => {
   return (
@@ -30,7 +31,7 @@ let AutoFilter = ({
         {icon && (
           <Icons
             name={icon}
-            style={{width: 90}}
+            style={{ width: 90 }}
             size={24 + index}
             color={colors.accent}
           />
@@ -41,7 +42,7 @@ let AutoFilter = ({
               ...styles.autoFilterText,
               fontWeight: icon ? 'bold' : '100',
             }}>
-            {name}
+            {name}{title}
           </Text>
         </View>
         <DefaultCheckbox isActive={isActive} setActive={setActive} {...rest} />

@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import configureStore from './src/redux/configureStore';
 import AppRouter from './src/routes/AppRouter';
+import { configureAxios } from './src/api/requests'
 
 const App = () => {
   useEffect(() => {
@@ -14,6 +15,7 @@ const App = () => {
     }
   }, []);
   let store = configureStore();
+  configureAxios(store)
   return (
     <SafeAreaProvider>
       <View style={styles.container}>

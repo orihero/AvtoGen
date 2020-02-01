@@ -4,11 +4,11 @@ export let URL = 'http://api.avtogen.qwertygroup.uz' /* 'https://3841f7e4.ngrok.
 
 let store;
 
-let configureAxios = (storeInstance) => {
-    // axios.interceptors.request.use((req) => {
-    //     req.headers = { Authorization: `Bearer ${storeInstance.getState().user.token}` }
-    //     return req;
-    // })
+export let configureAxios = (storeInstance) => {
+    axios.interceptors.request.use((req) => {
+        req.headers = { Authorization: `Bearer ${storeInstance.getState().user.token}` }
+        return req;
+    })
 }
 
 let formData = rawData => {
@@ -16,7 +16,6 @@ let formData = rawData => {
     Object.keys(rawData).forEach(key => {
         form.append(key, rawData[key]);
     });
-    console.warn(form);
     return form;
 };
 
@@ -26,7 +25,8 @@ let requests = {
         verifyCode: (id, credentials) => axios.put(`${URL}/auth/login-verify/${id}`, credentials),
     },
     main: {
-        companies: (id = 1) => axios.get(`${URL}/hand/companies?category_id=${id}`)
+        companies: (id = 1) => axios.get(`${URL}/hand/companies?category_id=${id}`),
+        services: () => axios.get(`${URL}/hand/services`)
     },
     user: {
         show: () => axios.get(`${URL}/profile/show`)
