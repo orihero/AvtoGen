@@ -1,12 +1,12 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
-import {colors} from '../../constants';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { colors } from '../../constants';
 import LogoWithText from '../../components/LogoWithText';
 import RoundButton from '../../components/common/RoundButton';
-import {strings} from '../../locales/strings';
+import { strings } from '../../locales/strings';
 import logoLight from '../../assets/images/logo-light.png';
 
-const Prompt = ({navigation}) => {
+const Prompt = ({ navigation }) => {
   let proceed = () => {
     navigation.navigate('CustomMap');
   };
@@ -21,11 +21,11 @@ const Prompt = ({navigation}) => {
       </View>
       <View style={styles.container}>
         <View style={styles.buttonContainer}>
-          <RoundButton onPress={proceed} text={strings.enter} full />
+          {/* <RoundButton onPress={proceed} text={strings.enter} full /> */}
           <RoundButton
             onPress={authorize}
             backgroundColor={colors.white}
-            text={strings.authorize}
+            text={strings.enter}
             full
             fill
           />
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 200,
-    height: 200 / 1.25,
+    height: 200 / 1.19,
   },
 });
 

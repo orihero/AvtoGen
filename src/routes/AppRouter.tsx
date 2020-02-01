@@ -1,5 +1,5 @@
 import React from 'react';
-import {createAppContainer, createSwitchNavigator} from 'react-navigation';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import {
   CustomMap,
   IntroSliders as Sliders,
@@ -8,42 +8,16 @@ import {
   Login,
   SelectLanguage,
   FillInfo,
+  Loader
 } from '../views/index';
-import {createStackNavigator} from 'react-navigation-stack';
+import { createStackNavigator } from 'react-navigation-stack';
 import InnerHeader from '../components/InnerHeader';
-import {strings} from '../locales/strings';
+import { strings } from '../locales/strings';
 
-let AuthStack = createStackNavigator(
+let PromptStack = createStackNavigator(
   {
     Sliders,
     Prompt,
-    Login,
-    SelectLanguage: {
-      screen: SelectLanguage,
-      navigationOptions: {
-        header: props => (
-          <InnerHeader
-            transparent
-            back="Login"
-            {...props}
-            title={strings.language}
-          />
-        ),
-      },
-    },
-    FillInfo: {
-      screen: FillInfo,
-      navigationOptions: {
-        header: props => (
-          <InnerHeader
-            transparent
-            back="SelectLanguage"
-            {...props}
-            title={strings.userInfo}
-          />
-        ),
-      },
-    },
   },
   {
     defaultNavigationOptions: {
@@ -51,13 +25,42 @@ let AuthStack = createStackNavigator(
     },
   },
 );
-let Stacks = createStackNavigator(
+
+let AuthorizedStack = createStackNavigator({
+  SelectLanguage: {
+    screen: SelectLanguage,
+    navigationOptions: {
+      header: props => (
+        <InnerHeader
+          transparent
+          {...props}
+          title={strings.language}
+        />
+      ),
+    },
+  },
+  FillInfo: {
+    screen: FillInfo,
+    navigationOptions: {
+      header: props => (
+        <InnerHeader
+          transparent
+          back
+          {...props}
+          title={strings.userInfo}
+        />
+      ),
+    },
+  },
+})
+
+let Main = createStackNavigator(
   {
     CustomMap,
     Account: {
       screen: Account,
       navigationOptions: {
-        header: ({navigation, ...rest}) => (
+        header: ({ navigation, ...rest }) => (
           <InnerHeader back="CustomMap" {...rest} navigation={navigation} />
         ),
       },
@@ -71,8 +74,11 @@ let Stacks = createStackNavigator(
 );
 
 let AuthSwitch = createSwitchNavigator({
-  AuthStack,
-  Stacks,
+  Loader,
+  PromptStack,
+  Login,
+  AuthorizedStack,
+  Main,
 });
 
 let App = createAppContainer(AuthSwitch);
