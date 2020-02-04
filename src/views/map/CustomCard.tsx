@@ -104,13 +104,22 @@ const CustomCard = ({ onSubmit }: CustomCardProps) => {
   const [active, setActive] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [childStates, setChildStates] = useState('00');
-  const [services, setServices] = useState([])
+  const [services, setServices] = useState([]);
+  const [carTypes, setCarTypes] = useState([]);
   let animation = new Animated.Value(0);
   let scroll;
   useEffect(() => {
     requests.main.services().then(res => {
       setServices(res.data.data)
-    })
+    });
+    requests.main.carTypes()
+      .then(res => {
+        setCarTypes(res.data.data)
+      })
+      .catch(res => {
+        console.warn(res.response)
+      })
+
   }, [])
   useEffect(() => {
     setTimeout(
@@ -204,7 +213,8 @@ const CustomCard = ({ onSubmit }: CustomCardProps) => {
                 childStates,
                 onScroll,
                 scrollRef: r => (scroll = r),
-                services
+                services,
+                carTypes
               }}
             />
           </Animated.View>
