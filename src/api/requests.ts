@@ -29,7 +29,8 @@ let requests = {
         services: () => axios.get(`${URL}/hand/services`)
     },
     user: {
-        show: () => axios.get(`${URL}/profile/show`)
+        show: () => axios.get(`${URL}/profile/show`),
+        update: (credentials) => axios.post(`${URL}/profile/update`, formData(credentials))
     }
 }
 

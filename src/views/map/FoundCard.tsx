@@ -7,6 +7,7 @@ import {
   LayoutAnimation,
   Animated,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { colors } from '../../constants/colors';
 import { Icons } from '../../constants/icons';
@@ -14,12 +15,14 @@ import RoundButton from '../../components/common/RoundButton';
 import { strings } from '../../locales/strings';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Text from '../../components/common/CustomText';
+import Rating from '../../components/Rating';
 const FoundCard = ({ onPress, current }) => {
   let isExpanded = false;
   if (!current) {
     return null;
   }
   const [expanded, setExpanded] = useState(false);
+  const [subscribed, setSubscribed] = useState(false)
   let height = new Animated.Value(0);
   let onGestureEvent = Animated.event([
     {
@@ -45,6 +48,113 @@ const FoundCard = ({ onPress, current }) => {
       }
     }
   };
+
+  let renderContent = () => {
+    if (!subscribed) {
+      return <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ height: contentHeight, maxHeight: 300 }}>
+        <View style={styles.content}>
+          <View style={styles.borderTop}>
+            <Text style={styles.mainText}>8 97 444 07 50</Text>
+          </View>
+          <View style={[styles.borderTop, styles.timeWrapper]}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                LayoutAnimation.configureNext(
+                  LayoutAnimation.Presets.easeInEaseOut,
+                );
+                setExpanded(!expanded);
+              }}>
+              <View style={styles.timeHeader}>
+                <View style={styles.twoBorder}>
+                  <Text style={[styles.timeText, styles.bold]}>
+                    Вторник
+                      </Text>
+                  <Text style={[styles.timeText, styles.bold]}>
+                    10:00–22:00
+                      </Text>
+                </View>
+                <Icons
+                  name="down-chevron"
+                  style={{
+                    transform: [{ rotate: expanded ? '180deg' : '0deg' }],
+                  }}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+            {expanded && (
+              <View>
+                <View style={styles.twoBorder}>
+                  <Text style={styles.timeText}>Среда</Text>
+                  <Text style={styles.timeText}>10:00–22:00</Text>
+                </View>
+                <View style={styles.twoBorder}>
+                  <Text style={styles.timeText}>Четверг</Text>
+                  <Text style={styles.timeText}>10:00–22:00</Text>
+                </View>
+                <View style={styles.twoBorder}>
+                  <Text style={styles.timeText}>Пятница</Text>
+                  <Text style={styles.timeText}>10:00–22:00</Text>
+                </View>
+                <View style={styles.twoBorder}>
+                  <Text style={styles.timeText}>Суббота</Text>
+                  <Text style={styles.timeText}>10:00–22:00</Text>
+                </View>
+                <View style={styles.twoBorder}>
+                  <Text style={styles.timeText}>Воскресенье</Text>
+                  <Text style={styles.timeText}>10:00–22:00</Text>
+                </View>
+              </View>
+            )}
+          </View>
+          <View style={styles.borderTop}>
+            <Text style={styles.mainText}>Рейтинг 4.5</Text>
+          </View>
+          <View style={styles.borderTop}>
+            <Text style={styles.mainText}>Wi Fi</Text>
+          </View>
+          <View style={styles.borderTop}>
+            <Text style={styles.mainText}>Кафе</Text>
+          </View>
+        </View>
+      </Animated.ScrollView>
+    }
+    return <>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.contentContainer}>
+          <View style={styles.iconWrapper}>
+            <Icons
+              name="check"
+              size={40}
+              color={colors.white}
+              style={{ transform: [{ translateY: 3 }] }}
+            />
+          </View>
+          <Text style={styles.lightText}>{strings.carWash}</Text>
+          <Text style={styles.nameText}>AVTOritet Car-Wash</Text>
+          <Text style={styles.thanksText}>{strings.thanks}</Text>
+          <Rating activeCount={rating} setActiveCount={setRating} count={5} />
+          <Text style={[styles.lightText, { fontSize: 18 }]}>{strings.rate}</Text>
+        </View>
+        <View style={styles.commentWrapper}>
+          <TextInput
+            multiline
+            numberOfLines={2}
+            placeholder={strings.leaveComment}
+          />
+        </View>
+      </ScrollView>
+      <RoundButton
+        fill
+        full
+        text={strings.rate}
+        backgroundColor={colors.yellow}
+        onPress={onPress}
+      />
+    </>
+  }
+
   let contentHeight = Animated.subtract(0, height).interpolate({
     inputRange: [0, 550],
     outputRange: [0, 550],
@@ -69,7 +179,7 @@ const FoundCard = ({ onPress, current }) => {
                 }}>
                 <View style={styles.indicator}></View>
               </View>
-              <TouchableWithoutFeedback
+              {!subscribed && <TouchableWithoutFeedback
                 onPress={() => {
                   if (isExpanded) {
                     Animated.spring(height, { toValue: 0 }).start(() => {
@@ -100,78 +210,12 @@ const FoundCard = ({ onPress, current }) => {
                   </View>
                 </View>
               </TouchableWithoutFeedback>
+              }
             </View>
           </PanGestureHandler>
-          <Animated.ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{ height: contentHeight, maxHeight: 300 }}>
-            <View style={styles.content}>
-              <View style={styles.borderTop}>
-                <Text style={styles.mainText}>8 97 444 07 50</Text>
-              </View>
-              <View style={[styles.borderTop, styles.timeWrapper]}>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    LayoutAnimation.configureNext(
-                      LayoutAnimation.Presets.easeInEaseOut,
-                    );
-                    setExpanded(!expanded);
-                  }}>
-                  <View style={styles.timeHeader}>
-                    <View style={styles.twoBorder}>
-                      <Text style={[styles.timeText, styles.bold]}>
-                        Вторник
-                      </Text>
-                      <Text style={[styles.timeText, styles.bold]}>
-                        10:00–22:00
-                      </Text>
-                    </View>
-                    <Icons
-                      name="down-chevron"
-                      style={{
-                        transform: [{ rotate: expanded ? '180deg' : '0deg' }],
-                      }}
-                    />
-                  </View>
-                </TouchableWithoutFeedback>
-                {expanded && (
-                  <View>
-                    <View style={styles.twoBorder}>
-                      <Text style={styles.timeText}>Среда</Text>
-                      <Text style={styles.timeText}>10:00–22:00</Text>
-                    </View>
-                    <View style={styles.twoBorder}>
-                      <Text style={styles.timeText}>Четверг</Text>
-                      <Text style={styles.timeText}>10:00–22:00</Text>
-                    </View>
-                    <View style={styles.twoBorder}>
-                      <Text style={styles.timeText}>Пятница</Text>
-                      <Text style={styles.timeText}>10:00–22:00</Text>
-                    </View>
-                    <View style={styles.twoBorder}>
-                      <Text style={styles.timeText}>Суббота</Text>
-                      <Text style={styles.timeText}>10:00–22:00</Text>
-                    </View>
-                    <View style={styles.twoBorder}>
-                      <Text style={styles.timeText}>Воскресенье</Text>
-                      <Text style={styles.timeText}>10:00–22:00</Text>
-                    </View>
-                  </View>
-                )}
-              </View>
-              <View style={styles.borderTop}>
-                <Text style={styles.mainText}>Рейтинг 4.5</Text>
-              </View>
-              <View style={styles.borderTop}>
-                <Text style={styles.mainText}>Wi Fi</Text>
-              </View>
-              <View style={styles.borderTop}>
-                <Text style={styles.mainText}>Кафе</Text>
-              </View>
-            </View>
-          </Animated.ScrollView>
+          {renderContent()}
         </View>
-        <Animated.View style={[styles.row, { transform: [{ translateY }] }]}>
+        {!subscribed && <Animated.View style={[styles.row, { transform: [{ translateY }] }]}>
           <View style={{ flex: 1 }}>
             <RoundButton
               borderColor={colors.black}
@@ -191,7 +235,7 @@ const FoundCard = ({ onPress, current }) => {
               text={strings.subscribe}
             />
           </View>
-        </Animated.View>
+        </Animated.View>}
       </Animated.View>
     </View>
   );
@@ -272,6 +316,40 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingBottom: 10,
     paddingHorizontal: 5,
+  },
+  contentContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nameText: {
+    color: colors.accent,
+    fontWeight: 'bold',
+    fontSize: 22,
+  },
+  reviewIconWrapper: {
+    backgroundColor: colors.lightBlue,
+    borderRadius: 40,
+    width: 64,
+    height: 64,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 30,
+  },
+  lightText: {
+    color: colors.lightGray,
+  },
+  thanksText: {
+    fontSize: 18,
+    color: colors.accent,
+    marginVertical: 40,
+  },
+  commentWrapper: {
+    borderRadius: 20,
+    backgroundColor: colors.white,
+    borderColor: colors.extraGray,
+    borderWidth: 1,
+    padding: 20,
+    marginVertical: 30,
   },
 });
 

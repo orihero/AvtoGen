@@ -15,7 +15,6 @@ const Loader = ({ navigation, userLoaded }) => {
             return
         }
         let userData = JSON.parse(data);
-        console.warn(userData);
         if (!userData || !userData.token) {
             navigation.navigate('PromptStack')
             return
@@ -27,7 +26,11 @@ const Loader = ({ navigation, userLoaded }) => {
         }
         strings.setLanguage(settings.language);
         userLoaded(userData);
-        navigation.navigate('Main')
+        if (!userData.name) {
+            navigation.navigate('FillInfo')
+        } else {
+            navigation.navigate('Main')
+        }
     }
     useEffect(() => {
         bootstrap();

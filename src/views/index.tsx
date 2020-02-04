@@ -1,4 +1,5 @@
 import CustomMap from './map/MapView';
-import Account from './settings/index';
+export * from './settings';
 export * from './auth';
-export {CustomMap, Account};
+export * from "./order"
+export { CustomMap };

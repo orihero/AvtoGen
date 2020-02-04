@@ -1,4 +1,4 @@
-import { USER_LOADED, USER_LOGGED_IN, SET_LANGUAGE } from './../types';
+import { SET_LANGUAGE, USER_LOADED, USER_LOGGED_IN, USER_LOGGED_OUT } from './../types';
 
 export const userLoaded = (payload) => ({
     type: USER_LOADED,
@@ -12,5 +12,10 @@ export const userLoggedIn = (payload) => ({
 
 export const setLanguage = (payload) => ({
     type: SET_LANGUAGE,
+    payload
+})
+
+export const userLoggedOut = (payload) => ({
+    type: USER_LOGGED_OUT,
     payload
 })

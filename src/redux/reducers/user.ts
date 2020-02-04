@@ -1,13 +1,15 @@
 import { strings } from './../../locales/strings';
-import { USER_LOADED, USER_LOGGED_IN, SET_LANGUAGE } from './../types';
+import { USER_LOADED, USER_LOGGED_IN, SET_LANGUAGE, USER_LOGGED_OUT } from './../types';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const initialState = {
-    token: "",
+    // token: "",
     settings: {
         language: 'ru'
     }
 }
+
+let columnKey = '@user';
 
 export const user = (state = initialState, { type, payload }) => {
     let newState;
@@ -16,13 +18,16 @@ export const user = (state = initialState, { type, payload }) => {
             return { ...state, ...payload }
         case USER_LOGGED_IN:
             newState = { ...state, ...payload };
-            AsyncStorage.setItem('@user', JSON.stringify(newState));
+            AsyncStorage.setItem(columnKey, JSON.stringify(newState));
             return newState;
         case SET_LANGUAGE:
             strings.setLanguage(payload);
             newState = { ...state, settings: { ...state.settings, language: payload } }
-            AsyncStorage.setItem('@user', JSON.stringify(newState));
+            AsyncStorage.setItem(columnKey, JSON.stringify(newState));
             return newState;
+        case USER_LOGGED_OUT:
+            AsyncStorage.setItem(columnKey, '')
+            return {}
         default:
             return state
     }

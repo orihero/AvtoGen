@@ -8,8 +8,8 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {withNavigation} from 'react-navigation';
-import {Icons, colors} from '../constants';
+import { withNavigation } from 'react-navigation';
+import { Icons, colors } from '../constants';
 
 const drawerContent = [
   {
@@ -39,7 +39,7 @@ const drawerContent = [
   },
 ];
 
-const CustomDrawer = ({navigation}) => (
+const CustomDrawer = ({ navigation }) => (
   <View style={styles.contentContainer}>
     <>
       <UserInfo
@@ -51,7 +51,7 @@ const CustomDrawer = ({navigation}) => (
         }}
       />
       {drawerContent.map(
-        (e, key) => !e.bottom && <DrawerItem {...{key, ...e}} />,
+        (e, key) => !e.bottom && <DrawerItem {...{ key, ...e }} />,
       )}
     </>
     <View style={styles.versionContainer}>
@@ -60,13 +60,13 @@ const CustomDrawer = ({navigation}) => (
   </View>
 );
 
-const UserInfo = ({user}) => {
+const UserInfo = ({ user }) => {
   if (!user) {
     user = {};
   }
   return (
     <View style={styles.userContainer}>
-      <Image style={styles.userAvatar} source={{uri: user.avatar_url}} />
+      <Image style={styles.userAvatar} source={{ uri: user.avatar_url }} />
       <View style={styles.nameContainer}>
         <Text style={styles.nameText}>{user.name}</Text>
         <Text style={styles.pointsText}>{user.phone}</Text>
@@ -76,21 +76,18 @@ const UserInfo = ({user}) => {
 };
 
 export const DrawerItem = withNavigation(
-  ({text, iconName, key, bold, iconText}) => (
+  ({ text, iconName, key, bold, iconText, onPress }) => (
     <TouchableWithoutFeedback
-      onPress={() => {
-        // navigation.toggleDrawer();
-        // navigation.navigate(navigateTo);
-      }}>
-      <View key={key} style={[styles.drawerItem, bold && {paddingVertical: 0}]}>
+      onPress={onPress}>
+      <View key={key} style={[styles.drawerItem, bold && { paddingVertical: 0 }]}>
         <View style={[styles.iconContainer]}>
           {iconText ? (
             <Text style={[styles.drawerText]}>{iconText}</Text>
           ) : (
-            <Icons name={iconName} size={22} color={colors.darkGray} />
-          )}
+              <Icons name={iconName} size={22} color={colors.darkGray} />
+            )}
         </View>
-        <Text style={[styles.drawerText, bold && {fontWeight: 'bold'}]}>
+        <Text style={[styles.drawerText, bold && { fontWeight: 'bold' }]}>
           {text}
         </Text>
       </View>

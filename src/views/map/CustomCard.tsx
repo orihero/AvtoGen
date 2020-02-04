@@ -75,7 +75,7 @@ checkboxes = [
       },
     ],
     title: strings.selectService,
-    services: true
+    service: true
   },
   {
     backgroundColor: colors.ultraLightGray,

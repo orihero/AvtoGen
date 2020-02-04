@@ -1,4 +1,4 @@
-package com.autogen;
+package uz.avtogen.client;
 
 import com.facebook.react.ReactActivity;
 

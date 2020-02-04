@@ -1,19 +1,33 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {commonStyles, colors} from '../../constants';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { commonStyles, colors } from '../../constants';
 import RoundInput from '../../components/common/RoundInput';
-import {strings} from '../../locales/strings';
+import { strings } from '../../locales/strings';
 import RoundButton from '../../components/common/RoundButton';
+import requests from '../../api/requests';
+import { connect } from 'react-redux';
+import { userLoggedIn } from '../../redux/actions'
 
-const SelectLanguage = ({navigation}) => {
+const SelectLanguage = ({ navigation, userLoggedIn }) => {
   let proceed = () => {
     navigation.navigate('CustomMap');
   };
+  let update = () => {
+    requests.user.update({ name: data.name + " " + data.surname })
+      .then(res => {
+        userLoggedIn(res.data.data);
+        navigation.navigate('CustomMap');
+      })
+      .catch(res => {
+        console.warn(res.response);
+      })
+  }
+  const [data, setData] = useState({ name: '', surname: '' })
   return (
     <View style={[styles.container]}>
       <View>
-        <RoundInput placeholder={strings.name} />
-        <RoundInput placeholder={strings.surname} />
+        <RoundInput onChangeText={e => setData({ ...data, name: e })} placeholder={strings.name} />
+        <RoundInput onChangeText={e => setData({ ...data, surname: e })} placeholder={strings.surname} />
       </View>
       <View style={styles.row}>
         <RoundButton
@@ -27,7 +41,7 @@ const SelectLanguage = ({navigation}) => {
         />
         <RoundButton
           flex
-          onPress={proceed}
+          onPress={update}
           full
           fill
           textColor={colors.white}
@@ -52,4 +66,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectLanguage;
+const mapStateToProps = ({ }) => ({
+
+})
+
+const mapDispatchToProps = {
+  userLoggedIn
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(SelectLanguage);

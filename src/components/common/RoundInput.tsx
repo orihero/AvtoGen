@@ -1,18 +1,19 @@
 import React from 'react';
-import {View, Text, StyleSheet, TextInput, Platform} from 'react-native';
-import {commonStyles, colors} from '../../constants/index';
+import { View, Text, StyleSheet, TextInput, Platform } from 'react-native';
+import { commonStyles, colors } from '../../constants/index';
 
 interface RoundInputProps {
   value?: string;
   placeholder: string;
 }
 
-const RoundInput = ({placeholder}) => {
+const RoundInput = ({ placeholder, onChangeText }) => {
   return (
     <View style={[commonStyles.shadow, styles.wrapper]}>
       <TextInput
         placeholder={placeholder}
         placeholderTextColor={colors.darkGray}
+        {...{ onChangeText }}
       />
     </View>
   );
