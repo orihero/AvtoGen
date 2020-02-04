@@ -52,6 +52,8 @@ export let strings = new LocalizedStrings({
     second: 'сек',
     connectionError: "Соединение прервано",
     somethingWentWrong: 'Что то пошло не так!',
-    fillAllFields:'Заполните все поля'
+    fillAllFields: 'Заполните все поля',
+    inWeek: 'За неделю',
+    inToday: 'За сегодня'
   },
 });

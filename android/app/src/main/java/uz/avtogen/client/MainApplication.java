@@ -1,4 +1,4 @@
-package com.autogen;
+package uz.avtogen.client;
 
 import android.app.Application;
 import android.content.Context;

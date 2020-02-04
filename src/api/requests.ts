@@ -26,10 +26,12 @@ let requests = {
     },
     main: {
         companies: (id = 1) => axios.get(`${URL}/hand/companies?category_id=${id}`),
-        services: () => axios.get(`${URL}/hand/services`)
+        services: () => axios.get(`${URL}/hand/services`),
+        carTypes: () => axios.get(`${URL}/hand/car-types`)
     },
     user: {
-        show: () => axios.get(`${URL}/profile/show`)
+        show: () => axios.get(`${URL}/profile/show`),
+        update: (credentials) => axios.post(`${URL}/profile/update`, formData(credentials))
     }
 }
 

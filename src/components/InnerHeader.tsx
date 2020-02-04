@@ -25,8 +25,8 @@ const InnerHeader = ({
           <HeaderBackButton
             tintColor={colors.darkGray}
             onPress={() => {
-              // if (back) navigation.navigate(back);
-              navigation.goBack();
+              console.warn('thought');
+              navigation.pop(1)
             }}
           />
         </View> : <View style={styles.side} />}
