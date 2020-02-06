@@ -1,29 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  LayoutAnimation,
-  Animated,
-  ScrollView,
-  Dimensions,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import { colors } from '../../constants/index';
-import RoundButton from '../../components/common/RoundButton';
-import RoundCheckbox, {
-  RoundCheckboxProps,
-} from '../../components/common/RoundCheckbox';
-import { strings } from '../../locales/strings';
-import { Icons } from '../../constants/icons';
-import DefaultCheckbox from '../../components/common/DefaultCheckbox';
-import AnimatedButton from '../../components/common/AnimatedButton';
-import WheelPicker from './WheelPicker';
-import AutoFilterContainer from './AutoFilterContainer';
+import React, { useEffect, useState } from 'react';
+import { Animated, Dimensions, LayoutAnimation, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
-import Text from '../../components/common/CustomText';
-import CardContent from './CardContent';
-import { FilterItem } from './AutoFilter';
 import requests from '../../api/requests';
+import AnimatedButton from '../../components/common/AnimatedButton';
+import Text from '../../components/common/CustomText';
+import RoundCheckbox, { RoundCheckboxProps } from '../../components/common/RoundCheckbox';
+import { colors } from '../../constants/index';
+import { strings } from '../../locales/strings';
+import { FilterItem } from './AutoFilter';
+import CardContent from './CardContent';
 
 interface FilterData {
   data: Array<FilterItem> | number;
@@ -46,6 +31,7 @@ checkboxes = [
       { icon: 'heavy', name: 'Грузовая' },
     ],
     title: strings.selectAuto,
+    carType: true
   },
   {
     backgroundColor: colors.ultraLightGray,

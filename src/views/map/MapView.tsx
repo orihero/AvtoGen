@@ -50,12 +50,7 @@ const CustomMap = ({ navigation }) => {
     });
     setTimeout(() => {
       if (map) {
-        map.animateToRegion({
-          latitude: 41.2825125,
-          longitude: 69.1392828,
-          latitudeDelta: 0.1,
-          longitudeDelta: 0.1,
-        });
+        map.fitToCoordinates(markers.map(e => ({ latitude: parseFloat(e.location_lat), longitude: parseFloat(e.location_lng) })));
       }
       setCardVisible(!cardVisible);
     }, 800);

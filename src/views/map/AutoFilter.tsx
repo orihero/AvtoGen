@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, StyleSheet, Image } from 'react-native';
 import { colors, Icons } from '../../constants';
 import DefaultCheckbox from '../../components/common/DefaultCheckbox';
 
@@ -23,18 +23,19 @@ let AutoFilter = ({
   ...rest
 }: FilterItem) => {
   return (
-    <TouchableWithoutFeedback onPress={() => setActive(index)}>
+    <TouchableWithoutFeedback key={index} onPress={() => setActive(index)}>
       <View
         style={[
           styles.autoFilterContainer,
         ]}>
         {icon && (
-          <Icons
-            name={icon}
-            style={{ width: 90 }}
-            size={24 + index}
-            color={colors.accent}
-          />
+          // <Icons
+          //   name={icon}
+          //   style={{ width: 90 }}
+          //   size={24 + index}
+          //   color={colors.accent}
+          // />
+          <Image source={{ uri: icon }} style={styles.icon} />
         )}
         <View style={styles.fill}>
           <Text
@@ -67,6 +68,11 @@ const styles = StyleSheet.create({
   fill: {
     flex: 1,
   },
+  icon: {
+    width: 36,
+    height: 20,
+    marginRight:15
+  }
 });
 
 export default AutoFilter;

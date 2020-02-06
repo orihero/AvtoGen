@@ -33,6 +33,7 @@ const CardContent = ({
   scrollRef,
   onScroll,
   services,
+  carTypes
 }) => {
   let shouldRender = active !== -1 && checkboxes[active];
   return (
@@ -64,7 +65,7 @@ const CardContent = ({
                   key={i}
                   proceed={proceed}
                   childStates={childStates}>
-                  {(e.service ? services : e.data).map((item, index) => {
+                  {(e.service ? services : e.carType ? carTypes : e.data).map((item, index) => {
                     return (
                       <AutoFilter
                         {...item}
