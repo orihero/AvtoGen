@@ -16,7 +16,7 @@ import { strings } from '../../locales/strings';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Text from '../../components/common/CustomText';
 import Rating from '../../components/Rating';
-const FoundCard = ({ onPress, current }) => {
+const FoundCard = ({ subscribe, current, setShowRoute }) => {
   let isExpanded = false;
   if (!current) {
     return null;
@@ -150,7 +150,7 @@ const FoundCard = ({ onPress, current }) => {
         full
         text={strings.rate}
         backgroundColor={colors.yellow}
-        onPress={onPress}
+        onPress={subscribe}
       />
     </>
   }
@@ -223,12 +223,12 @@ const FoundCard = ({ onPress, current }) => {
               fill
               full
               text={strings.route}
-              onPress={onPress}
+              onPress={() => setShowRoute(true)}
             />
           </View>
           <View style={{ flex: 1 }}>
             <RoundButton
-              onPress={onPress}
+              onPress={subscribe}
               fill
               full
               backgroundColor={colors.yellow}

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet, Image } from 'react-native';
 import { colors, Icons } from '../../constants';
 import DefaultCheckbox from '../../components/common/DefaultCheckbox';
+import CheckBox from '@react-native-community/checkbox'
 
 export interface FilterItem {
   name: string;
@@ -20,10 +21,11 @@ let AutoFilter = ({
   setActive,
   isActive,
   title,
+  service,
   ...rest
 }: FilterItem) => {
   return (
-    <TouchableWithoutFeedback key={index} onPress={() => setActive(index)}>
+    <TouchableWithoutFeedback key={index} onPress={() => service ? setActive(index, !isActive) : setActive(index)}>
       <View
         style={[
           styles.autoFilterContainer,
@@ -46,7 +48,7 @@ let AutoFilter = ({
             {name}{title}
           </Text>
         </View>
-        <DefaultCheckbox isActive={isActive} setActive={setActive} {...rest} />
+        {service ? <CheckBox value={isActive} onValueChange={() => setActive(index, !isActive)} /> : <DefaultCheckbox isActive={isActive} setActive={() => setActive(index)} {...rest} />}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 36,
     height: 20,
-    marginRight:15
+    marginRight: 15
   }
 });
 

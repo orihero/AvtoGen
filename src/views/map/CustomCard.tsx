@@ -92,6 +92,8 @@ const CustomCard = ({ onSubmit }: CustomCardProps) => {
   const [childStates, setChildStates] = useState('00');
   const [services, setServices] = useState([]);
   const [carTypes, setCarTypes] = useState([]);
+  const [data, setData] = useState({ '0': -1, '1': {} })
+
   let animation = new Animated.Value(0);
   let scroll;
   useEffect(() => {
@@ -200,7 +202,9 @@ const CustomCard = ({ onSubmit }: CustomCardProps) => {
                 onScroll,
                 scrollRef: r => (scroll = r),
                 services,
-                carTypes
+                carTypes,
+                data,
+                setData
               }}
             />
           </Animated.View>
@@ -222,7 +226,7 @@ const CustomCard = ({ onSubmit }: CustomCardProps) => {
           })}
         </View>
         <AnimatedButton
-          onPress={onSubmit}
+          onPress={() => onSubmit(data)}
           backgroundColor={colors.yellow}
           borderColor={colors.yellow}
           text={strings.findCarWash}

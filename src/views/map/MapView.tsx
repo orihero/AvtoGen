@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Image, LayoutAnimation, Platform, StatusBar, StyleSheet, View } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { Image, LayoutAnimation, Platform, StatusBar, StyleSheet, View, PermissionsAndroid } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import markerIcon from '../../assets/images/marker.png';
 import selectedMarker from '../../assets/images/selectedMarker.png';
@@ -9,6 +9,10 @@ import CustomCard from './CustomCard';
 import FoundCard from './FoundCard';
 import ReviewCard from './ReviewCard';
 import requests from '../../api/requests';
+import Geolocation from '@react-native-community/geolocation';
+import MapsWithDirection from 'react-native-maps-directions';
+import { colors } from '../../constants';
+import { openInMaps } from '../../utils/maps';
 
 interface Region {
   latitude: Number;
@@ -17,16 +21,30 @@ interface Region {
   longitudeDelta: Number;
 }
 
+let API_KEY = 'AIzaSyA9lIVEXUvvgivZuVMEasMU_ejHYsdYmHg'
+
 const CustomMap = ({ navigation }) => {
-  let map;
   const [cardVisible, setCardVisible] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const [markers, setMarkers] = useState([
-  ]);
+  const [markers, setMarkers] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
+  const [showRoute, setShowRoute] = useState(false)
+  const map = useRef(null);
+  let requestPermissions = () => {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+    PermissionsAndroid.request('android.permission.ACCESS_FINE_LOCATION')
+      .then(res => {
+      }).catch(res => {
+        console.warn('REJECTED: ', res);
+      })
+  }
   useEffect(() => {
     requests.main.companies().then(res => {
       setMarkers(res.data.data)
     })
+    requestPermissions()
   }, [])
   const [activeMarker, setactiveMarker] = useState(-1);
   let onMapReady = () => {
@@ -38,8 +56,22 @@ const CustomMap = ({ navigation }) => {
       ),
     );
     setCardVisible(true);
+    Geolocation.getCurrentPosition(({ coords: { longitude, latitude } }) => {
+      setUserLocation({ longitude, latitude })
+    }, err => console.warn('REJECTED: ', err))
   };
-  let onSubmit = () => {
+
+  let drawRoute = () => {
+    // setShowRoute(true);
+    openInMaps(getCoord(markers[activeMarker]))
+  }
+  let subscribe = () => {
+
+  }
+  let getCoord = (e) => {
+    return { latitude: parseFloat(e.location_lat), longitude: parseFloat(e.location_lng) }
+  }
+  let onSubmit = (data) => {
     LayoutAnimation.configureNext({
       duration: 100,
       create: {
@@ -48,16 +80,31 @@ const CustomMap = ({ navigation }) => {
         property: LayoutAnimation.Properties.scaleXY,
       },
     });
-    setTimeout(() => {
-      if (map) {
-        map.fitToCoordinates(markers.map(e => ({ latitude: parseFloat(e.location_lat), longitude: parseFloat(e.location_lng) })));
-      }
-      setCardVisible(!cardVisible);
-    }, 800);
+    requests.main.searchCompanies({ car_type_id: data["0"], services: data["1"] })
+      .then(res => {
+        setMarkers(res.data.data);
+      })
+      .finally(() => {
+        if (map && markers && markers.length > 0) {
+          map.current.fitToCoordinates(markers.map(e => (getCoord(e))));
+        }
+        setCardVisible(false)
+      })
   };
+
+  let renderRoute = () => {
+    let focus = markers[activeMarker]
+    let destination = {};
+    destination.longitude = parseFloat(focus.location_lng)
+    destination.latitude = parseFloat(focus.location_lat)
+    return <MapsWithDirection strokeColor={colors.yellow} strokeWidth={5} apikey={API_KEY} origin={userLocation} destination={destination} />
+  }
   return (
     <View style={styles.container}>
       <MapView
+        showsUserLocation
+        showsMyLocationButton
+        showsScale
         style={styles.container}
         initialRegion={{
           latitude: 41.2825125,
@@ -65,9 +112,10 @@ const CustomMap = ({ navigation }) => {
           latitudeDelta: 0.8,
           longitudeDelta: 0.5,
         }}
-        ref={ref => (map = ref)}
+        ref={ref => (map.current = ref)}
         // customMapStyle={customMapStyle}
         onMapReady={onMapReady}>
+        {userLocation && showRoute ? renderRoute() : null}
         {markers &&
           markers.map((e, i) => {
             return (
@@ -76,7 +124,7 @@ const CustomMap = ({ navigation }) => {
                 coordinate={{ latitude: parseFloat(e.location_lat), longitude: parseFloat(e.location_lng) }}
                 title={e.title}
                 onPress={() => {
-                  map.animateToRegion({
+                  map.current.animateToRegion({
                     ...{ latitude: parseFloat(e.location_lat), longitude: parseFloat(e.location_lng) },
                     latitudeDelta: 0.1,
                     longitudeDelta: 0.1,
@@ -111,7 +159,7 @@ const CustomMap = ({ navigation }) => {
       {cardVisible && <CustomCard onSubmit={onSubmit} />}
       {
         activeMarker !== -1 && !subscribed && (
-          <FoundCard current={markers.length > 0 && activeMarker !== -1 ? markers[activeMarker] : null} onPress={() => setSubscribed(true)} />
+          <FoundCard setShowRoute={drawRoute} current={markers.length > 0 && activeMarker !== -1 ? markers[activeMarker] : null} subscribe={subscribe} />
         )
       }
       {
