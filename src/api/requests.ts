@@ -42,7 +42,8 @@ let requests = {
         companies: (id = 1) => axios.get(`${URL}/hand/companies?category_id=${id}`),
         services: () => axios.get(`${URL}/hand/services`),
         carTypes: () => axios.get(`${URL}/hand/car-types`),
-        searchCompanies: (data) => axios.post(`${URL}/hand/search-company`, formData(data))
+        searchCompanies: (data) => axios.post(`${URL}/hand/search-company`, formData(data)),
+        book: (credentials) => axios.post(`${URL}/booking/book`, formData(credentials))
     },
     user: {
         show: () => axios.get(`${URL}/profile/show`),
