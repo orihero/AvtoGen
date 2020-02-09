@@ -35,8 +35,9 @@ const Login = ({ navigation, userLoggedIn }) => {
       console.warn(res.data.data);
       setData(res.data.data)
     }).catch(res => {
+      console.warn(res);
       if (!res.response) {
-        console.warn(res);
+        console.warn(res.response);
         setError(strings.connectionError)
         return
       }
@@ -56,15 +57,15 @@ const Login = ({ navigation, userLoggedIn }) => {
       return;
     }
     setLoading(true)
-    // console.warn(data);
     requests.auth.verifyCode(data.user_id, { code })
       .then(res => {
         userLoggedIn(res.data.data);
         navigation.navigate('SelectLanguage');
       })
       .catch(res => {
+        console.warn(res);
         if (!res.response) {
-          console.warn(res);
+          console.warn(res.response);
           setError(strings.connectionError)
           return
         }
@@ -161,9 +162,9 @@ const Login = ({ navigation, userLoggedIn }) => {
                 style={{
                   justifyContent: 'center',
                   alignItems: 'center',
-                  width: 60,
-                  height: 60,
-                  margin: 5,
+                  width: 72,
+                  height: 72,
+                  margin: 8,
                 }}>
                 <Icons name="delete" size={40} color={colors.white} />
               </View>
@@ -171,7 +172,7 @@ const Login = ({ navigation, userLoggedIn }) => {
           </View>
         </View>
         <RoundButton
-          text={strings.confirm}
+          text={confirmed ? strings.confirm : strings.continue}
           fill
           full
           loading={loading}
@@ -231,12 +232,12 @@ const styles = StyleSheet.create({
   },
   squareButtonContainer: {
     borderRadius: 8,
-    width: 60,
-    height: 60,
+    width: 72,
+    height: 72,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.white,
-    margin: 5,
+    margin: 8,
   },
   infoWrapper: {
     justifyContent: 'center',

@@ -8,6 +8,7 @@ import {
   Animated,
   Dimensions,
   TextInput,
+  Image,
 } from 'react-native';
 import { colors } from '../../constants/colors';
 import { Icons } from '../../constants/icons';
@@ -16,7 +17,7 @@ import { strings } from '../../locales/strings';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Text from '../../components/common/CustomText';
 import Rating from '../../components/Rating';
-const FoundCard = ({ onPress, current }) => {
+const FoundCard = ({ subscribe, current, setShowRoute, data }) => {
   let isExpanded = false;
   if (!current) {
     return null;
@@ -56,7 +57,7 @@ const FoundCard = ({ onPress, current }) => {
         style={{ height: contentHeight, maxHeight: 300 }}>
         <View style={styles.content}>
           <View style={styles.borderTop}>
-            <Text style={styles.mainText}>8 97 444 07 50</Text>
+            {current.phones && current.phones.map((e, i) => <Text key={i} style={styles.mainText}>{e}</Text>)}
           </View>
           <View style={[styles.borderTop, styles.timeWrapper]}>
             <TouchableWithoutFeedback
@@ -111,12 +112,12 @@ const FoundCard = ({ onPress, current }) => {
           <View style={styles.borderTop}>
             <Text style={styles.mainText}>Рейтинг 4.5</Text>
           </View>
-          <View style={styles.borderTop}>
-            <Text style={styles.mainText}>Wi Fi</Text>
-          </View>
-          <View style={styles.borderTop}>
-            <Text style={styles.mainText}>Кафе</Text>
-          </View>
+          {current.features.map((e, i) => {
+            return <View style={[styles.row, styles.borderTop]}>
+              <Image style={styles.featureIcon} source={{ uri: e.icon }} />
+              <Text style={styles.mainText}>Wi Fi</Text>
+            </View>
+          })}
         </View>
       </Animated.ScrollView>
     }
@@ -150,7 +151,7 @@ const FoundCard = ({ onPress, current }) => {
         full
         text={strings.rate}
         backgroundColor={colors.yellow}
-        onPress={onPress}
+        onPress={subscribe}
       />
     </>
   }
@@ -204,6 +205,7 @@ const FoundCard = ({ onPress, current }) => {
                     <Text style={styles.location}>
                       {current.company_address}
                     </Text>
+                    <Text style={styles.title}>{current.services ? current.services.reduce((prev, el) => data['1'][el.id] ? el.price ? prev + el.price : prev + 100 : prev, 0) : ''}</Text>
                   </View>
                   <View style={styles.distanceWrapper}>
                     <Text style={styles.distance}>1.7 Km</Text>
@@ -223,12 +225,12 @@ const FoundCard = ({ onPress, current }) => {
               fill
               full
               text={strings.route}
-              onPress={onPress}
+              onPress={() => setShowRoute(true)}
             />
           </View>
           <View style={{ flex: 1 }}>
             <RoundButton
-              onPress={onPress}
+              onPress={subscribe}
               fill
               full
               backgroundColor={colors.yellow}
@@ -242,6 +244,11 @@ const FoundCard = ({ onPress, current }) => {
 };
 
 const styles = StyleSheet.create({
+  featureIcon: {
+    width: 20,
+    height: 20,
+    marginHorizontal: 10
+  },
   row: { flexDirection: 'row' },
   container: {
     backgroundColor: colors.white,

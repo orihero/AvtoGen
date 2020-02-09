@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,30 +7,32 @@ import {
   Animated,
   StyleSheet,
 } from 'react-native';
-import {colors} from '../../constants';
-import {ScrollView} from 'react-native-gesture-handler';
+import { colors } from '../../constants';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const AutoFilterContainer = ({
   children,
-  proceed = index => {},
+  proceed = index => { },
   childStates,
   parentIndex,
 }) => {
   const [active, setActive] = useState(parseInt(childStates[parentIndex]));
-  let onCheck = index => {
-    proceed(index);
+  let onCheck = (index, isService) => {
+    if (!isService) {
+      proceed(index);
+    }
     setActive(index);
   };
   return React.Children.map(children, (child, index) => {
     return React.cloneElement(child, {
       isActive: active === index,
-      setActive: () => onCheck(index),
+      setActive: (val, isService) => onCheck(index, isService, val),
     });
   });
 };
 
 const styles = StyleSheet.create({
-  container: {backgroundColor: colors.white},
+  container: { backgroundColor: colors.white },
 });
 
 export default AutoFilterContainer;

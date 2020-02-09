@@ -33,8 +33,18 @@ const CardContent = ({
   scrollRef,
   onScroll,
   services,
+  carTypes,
+  data,
+  setData
 }) => {
-  let shouldRender = active !== -1 && checkboxes[active];
+  let onChange = (index, value) => {
+    if (value) {
+      setData({ ...data, [1]: { ...data['1'], [index]: value } })
+      return;
+    }
+    setData({ ...data, [0]: index })
+    proceed(1)
+  }
   return (
     <View style={{ flex: 1 }}>
       <Animated.ScrollView
@@ -59,22 +69,21 @@ const CardContent = ({
                 width,
               }}>
               {e.data && e.data.length > 0 ? (
-                <AutoFilterContainer
-                  parentIndex={i}
-                  key={i}
-                  proceed={proceed}
-                  childStates={childStates}>
-                  {(e.service ? services : e.data).map((item, index) => {
+                <>
+                  {(e.service ? services : e.carType ? carTypes : e.data).map((item, index) => {
                     return (
                       <AutoFilter
                         {...item}
                         key={index}
                         index={index}
-                        isLast={index == checkboxes[active].data.length - 1}
+                        isLast={index === checkboxes[active].data.length - 1}
+                        service={e.service}
+                        isActive={e.service ? data[i][index] : data[i] === index}
+                        setActive={onChange}
                       />
                     );
                   })}
-                </AutoFilterContainer>
+                </>
               ) : (
                   <WheelPicker />
                 )}

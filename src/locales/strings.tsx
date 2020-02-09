@@ -54,6 +54,8 @@ export let strings = new LocalizedStrings({
     somethingWentWrong: 'Что то пошло не так!',
     fillAllFields: 'Заполните все поля',
     inWeek: 'За неделю',
-    inToday: 'За сегодня'
+    inToday: 'За сегодня',
+    continue: 'Продолжить',
+    waiting: 'ОЖИДАЕМ ОТВЕТА'
   },
 });

@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, StyleSheet, Image } from 'react-native';
 import { colors, Icons } from '../../constants';
 import DefaultCheckbox from '../../components/common/DefaultCheckbox';
+import CheckBox from '@react-native-community/checkbox'
 
 export interface FilterItem {
   name: string;
@@ -20,21 +21,23 @@ let AutoFilter = ({
   setActive,
   isActive,
   title,
+  service,
   ...rest
 }: FilterItem) => {
   return (
-    <TouchableWithoutFeedback onPress={() => setActive(index)}>
+    <TouchableWithoutFeedback key={index} onPress={() => service ? setActive(index, !isActive) : setActive(index)}>
       <View
         style={[
           styles.autoFilterContainer,
         ]}>
         {icon && (
-          <Icons
-            name={icon}
-            style={{ width: 90 }}
-            size={24 + index}
-            color={colors.accent}
-          />
+          // <Icons
+          //   name={icon}
+          //   style={{ width: 90 }}
+          //   size={24 + index}
+          //   color={colors.accent}
+          // />
+          <Image source={{ uri: icon }} style={styles.icon} />
         )}
         <View style={styles.fill}>
           <Text
@@ -45,7 +48,7 @@ let AutoFilter = ({
             {name}{title}
           </Text>
         </View>
-        <DefaultCheckbox isActive={isActive} setActive={setActive} {...rest} />
+        {service ? <CheckBox value={isActive} onValueChange={() => setActive(index, !isActive)} /> : <DefaultCheckbox isActive={isActive} setActive={() => setActive(index)} {...rest} />}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -67,6 +70,11 @@ const styles = StyleSheet.create({
   fill: {
     flex: 1,
   },
+  icon: {
+    width: 36,
+    height: 20,
+    marginRight: 15
+  }
 });
 
 export default AutoFilter;
