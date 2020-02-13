@@ -86,7 +86,10 @@ const CustomMap = ({ navigation }) => {
 
     let subscribe = () => {
         let current = markers[activeMarker];
-        requests.main.book({ payment_type: 'cash', booking_type: 'app', services: data['1'] })
+        // let services = Object.keys(data['1']);
+        let postData = { payment_type: 'cash', booking_type: 'app', services: data['1'], car_type_id: data['0'], company_id: current.id };
+        console.warn(postData);
+        requests.main.book(postData)
             .then((res) => {
                 console.warn(res);
             })
@@ -120,7 +123,11 @@ const CustomMap = ({ navigation }) => {
         });
         requests.main.searchCompanies({ car_type_id: data["0"], services: data["1"] })
             .then(res => {
+                console.warn(res.data.data);
                 setMarkers(res.data.data);
+            })
+            .catch(({ response }) => {
+                console.warn(response)
             })
             .finally(() => {
                 if (map && markers && markers.length > 0) {
@@ -167,7 +174,8 @@ const CustomMap = ({ navigation }) => {
                                     setactiveMarker(i);
                                     setCardVisible(false);
                                 }}>
-                                {activeMarker === i && subscribed && <Animated.View style={[styles.animationBase, { width, height: width, opacity, position: 'absolute', alignSelf: 'center', }]} />}
+                                {activeMarker === i && subscribed && <Animated.View
+                                    style={[styles.animationBase, { width, height: width, opacity, position: 'absolute', alignSelf: 'center', }]} />}
                                 <Image
                                     source={activeMarker === i ? selectedMarker : markerIcon}
                                     style={{
@@ -194,20 +202,23 @@ const CustomMap = ({ navigation }) => {
                 }}
                 isBack={activeMarker !== -1}
             />
-            <CustomCard data={data} setData={setData} onSubmit={onSubmit} />
+            {
+                cardVisible &&
+                <CustomCard data={data} setData={setData} onSubmit={onSubmit} />
+            }
             {
                 activeMarker !== -1 && !subscribed && (
                     <FoundCard data={data} setShowRoute={drawRoute} current={markers.length > 0 && activeMarker !== -1 ? markers[activeMarker] : null} subscribe={subscribe} />
                 )
             }
             {/* {
-        subscribed && (
-          <ReviewCard
-            navigation={navigation}
-            onSubmit={() => setSubscribed(false)}
-          />
-        )
-      } */}
+                subscribed && (
+                    <ReviewCard
+                        navigation={navigation}
+                        onSubmit={() => setSubscribed(false)}
+                    />
+                )
+            } */}
 
             {message && <MapMessage text={message} />}
         </View >

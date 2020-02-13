@@ -35,7 +35,7 @@ const Login = ({ navigation, userLoggedIn }) => {
       console.warn(res.data.data);
       setData(res.data.data)
     }).catch(res => {
-      console.warn(res);
+      console.warn(res.response);
       if (!res.response) {
         console.warn(res.response);
         setError(strings.connectionError)
@@ -63,7 +63,7 @@ const Login = ({ navigation, userLoggedIn }) => {
         navigation.navigate('SelectLanguage');
       })
       .catch(res => {
-        console.warn(res);
+        console.warn(res.response);
         if (!res.response) {
           console.warn(res.response);
           setError(strings.connectionError)

@@ -14,28 +14,32 @@ export let configureAxios = (storeInstance) => {
 let formData = rawData => {
     let form = new FormData();
     Object.keys(rawData).forEach(key => {
+
         if (Array.isArray(rawData[key])) {
+            console.warn('tonka bu');
             let obj = rawData[key];
             for (let index in obj) {
                 form.append(`${key}[${index}]`, obj[index])
             }
             return;
         }
-        if (typeof rawData === 'object') {
+        if (typeof rawData[key] === 'object') {
             let obj = rawData[key];
+            console.warn('timsoh bu', obj);
             Object.keys(obj).forEach((id, index) => {
-                form.append(`${key}[${index}]`, id)
+                form.append(`${key}[${index}]`, parseInt(id))
             })
             return;
         }
         form.append(key, rawData[key]);
     });
+    console.warn(form);
     return form;
 };
 
 let requests = {
     auth: {
-        login: (credentials) => axios.post(`${URL}/auth/login`, formData(credentials)),
+        login: (credentials) => axios.post(`${URL}/auth/login`, credentials),
         verifyCode: (id, credentials) => axios.put(`${URL}/auth/login-verify/${id}`, credentials),
     },
     main: {
@@ -47,7 +51,7 @@ let requests = {
     },
     user: {
         show: () => axios.get(`${URL}/profile/show`),
-        update: (credentials) => axios.post(`${URL}/profile/update`, formData(credentials))
+        update: (credentials) => axios.post(`${URL}/profile/update`, credentials)
     }
 }
 
