@@ -51,7 +51,10 @@ let requests = {
     },
     user: {
         show: () => axios.get(`${URL}/profile/show`),
-        update: (credentials) => axios.post(`${URL}/profile/update`, credentials)
+        update: (credentials) => axios.post(`${URL}/profile/update`, formData(credentials))
+    },
+    profile: {
+        setToken: (credentials) => axios.post(`${URL}/profile/setFcmToken`, formData(credentials))
     }
 }
 

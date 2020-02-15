@@ -6,6 +6,8 @@ import logo from '../../assets/images/logo-light.png';
 import { colors } from '../../constants';
 import { strings } from '../../locales/strings';
 import { userLoaded } from '../../redux/actions';
+import NotificationService from '../../utils/NotificationService';
+import requests from '../../api/requests';
 
 const Loader = ({ navigation, userLoaded }) => {
     let bootstrap = async () => {
@@ -29,6 +31,18 @@ const Loader = ({ navigation, userLoaded }) => {
         if (!userData.name) {
             navigation.navigate('FillInfo')
         } else {
+            //notification
+            NotificationService.init();
+            let tempToken = await NotificationService.getFcmToken()
+            if (tempToken) {
+                requests.profile.setToken({ fcm_token: tempToken })
+                    .then(response => {
+                        console.warn(response)
+                    })
+                    .catch(({ response }) => {
+                        console.warn(response)
+                    })
+            }
             navigation.navigate('Main')
         }
     }

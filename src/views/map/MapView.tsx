@@ -123,6 +123,7 @@ const CustomMap = ({ navigation }) => {
         });
         requests.main.searchCompanies({ car_type_id: data["0"], services: data["1"] })
             .then(res => {
+                console.warn(data);
                 console.warn(res.data.data);
                 setMarkers(res.data.data);
             })
