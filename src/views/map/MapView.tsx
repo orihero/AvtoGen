@@ -106,7 +106,13 @@ const CustomMap = ({ navigation }) => {
         let destination = {};
         destination.longitude = parseFloat(focus.location_lng)
         destination.latitude = parseFloat(focus.location_lat)
-        return <MapsWithDirection strokeColor={colors.yellow} strokeWidth={5} apikey={API_KEY} origin={userLocation} destination={destination} />
+        return <MapsWithDirection
+            strokeColor={colors.yellow}
+            strokeWidth={5}
+            apikey={API_KEY}
+            origin={userLocation}
+            destination={destination}
+        />
     }
 
     let getCoord = (e) => {
