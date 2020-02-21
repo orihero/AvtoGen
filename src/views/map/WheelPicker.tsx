@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,21 +9,21 @@ import {
   Platform,
 } from 'react-native';
 import Picker from 'react-native-wheel-picker';
-import {colors} from '../../constants';
-import {strings} from '../../locales/strings';
+import { colors } from '../../constants';
+import { strings } from '../../locales/strings';
 var PickerItem = Picker.Item;
 
-const WheelPicker = () => {
+const WheelPicker = ({ setData }) => {
   const [dayIndex, setDayIndex] = useState(0);
+  const [animation, setanimation] = useState(new Animated.Value(0))
   let [pickerData, setPickerData] = useState({
     selectedHour: 15,
-    selectedMinute: 30,
-    hourList: Array.from({length: 24}, (v, k) => (parseInt(k) + 1).toString()),
-    minuteList: Array.from({length: 60}, (v, k) =>
-      (parseInt(k) + 1).toString(),
+    selectedMinute: 29,
+    hourList: Array.from({ length: 24 }, (v, k) => (parseInt(k)).toString()),
+    minuteList: Array.from({ length: 60 }, (v, k) =>
+      (parseInt(k)).toString(),
     ),
   });
-  let animation = new Animated.Value(0);
   let left = animation.interpolate({
     inputRange: [0, 1],
     outputRange: ['16.5%', '58%'],
@@ -51,54 +51,54 @@ const WheelPicker = () => {
               setDayIndex(1 ^ dayIndex);
             });
           }}>
-          <Animated.Text style={[styles.dayText, {color: reverseColor}]}>
+          <Animated.Text style={[styles.dayText, { color: reverseColor }]}>
             {strings.today}
           </Animated.Text>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
           onPress={() => {
-            Animated.spring(animation, {toValue: 1 ^ dayIndex}).start(() => {
+            Animated.spring(animation, { toValue: 1 ^ dayIndex }).start(() => {
               setDayIndex(1 ^ dayIndex);
             });
           }}>
-          <Animated.Text style={[styles.dayText, {color}]}>
+          <Animated.Text style={[styles.dayText, { color }]}>
             {strings.tomorrow}
           </Animated.Text>
         </TouchableWithoutFeedback>
-        <Animated.View style={[styles.indicator, {left}]} />
+        <Animated.View style={[styles.indicator, { left }]} />
       </View>
-      <Text style={[styles.title, {marginTop: 10}]}>{strings.time}</Text>
+      <Text style={[styles.title, { marginTop: 10 }]}>{strings.time}</Text>
       <View style={styles.bottom}>
         <View style={styles.pickerWrapper}>
           <Picker
             style={styles.picker}
             selectedValue={pickerData.selectedHour}
-            itemStyle={{color: 'black', fontSize: 30, fontWeight: 'bold'}}
+            itemStyle={{ color: 'black', fontSize: 30, fontWeight: 'bold' }}
             onValueChange={index =>
-              setPickerData({...pickerData, selectedHour: index})
+              setPickerData({ ...pickerData, selectedHour: index })
             }>
             {pickerData.hourList.map((value, i) => (
               <PickerItem label={value} value={i} key={i} />
             ))}
           </Picker>
           <View style={styles.border} />
-          <View style={[styles.border, {left: '55%'}]} />
+          <View style={[styles.border, { left: '55%' }]} />
           <Text style={styles.pickerText}>{strings.hours}</Text>
         </View>
         <View style={styles.pickerWrapper}>
           <Picker
             style={styles.picker}
             selectedValue={pickerData.selectedMinute}
-            itemStyle={{color: 'black', fontSize: 30, fontWeight: 'bold'}}
+            itemStyle={{ color: 'black', fontSize: 30, fontWeight: 'bold' }}
             onValueChange={index =>
-              setPickerData({...pickerData, selectedMinute: index})
+              setPickerData({ ...pickerData, selectedMinute: index })
             }>
             {pickerData.minuteList.map((value, i) => (
               <PickerItem label={value} value={i} key={i} />
             ))}
           </Picker>
           <View style={styles.border} />
-          <View style={[styles.border, {left: '45%'}]} />
+          <View style={[styles.border, { left: '45%' }]} />
           <Text style={styles.pickerText}>{strings.minutes}</Text>
         </View>
       </View>

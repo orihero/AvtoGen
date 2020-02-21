@@ -1,10 +1,11 @@
-import { user } from './reducers/user';
+import { user, order } from './reducers';
 import { createStore, combineReducers } from 'redux';
 
 
 let configureStore = () => {
     return createStore(combineReducers({
-        user
+        user,
+        order
     }))
 }
 

@@ -17,7 +17,7 @@ import { strings } from '../../locales/strings';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Text from '../../components/common/CustomText';
 import Rating from '../../components/Rating';
-const FoundCard = ({ subscribe, current, setShowRoute, data }) => {
+const FoundCard = ({ subscribe, current, setShowRoute, data, buttonsEnabled, cancel }) => {
   let isExpanded = false;
   if (!current) {
     return null;
@@ -115,7 +115,7 @@ const FoundCard = ({ subscribe, current, setShowRoute, data }) => {
           {current.features.map((e, i) => {
             return <View style={[styles.row, styles.borderTop]}>
               <Image style={styles.featureIcon} source={{ uri: e.icon }} />
-              <Text style={styles.mainText}>Wi Fi</Text>
+              <Text style={styles.mainText}>{e.title}</Text>
             </View>
           })}
         </View>
@@ -230,11 +230,11 @@ const FoundCard = ({ subscribe, current, setShowRoute, data }) => {
           </View>
           <View style={{ flex: 1 }}>
             <RoundButton
-              onPress={subscribe}
+              onPress={!buttonsEnabled ? cancel : subscribe}
               fill
               full
               backgroundColor={colors.yellow}
-              text={strings.subscribe}
+              text={!buttonsEnabled ? strings.cancel : strings.subscribe}
             />
           </View>
         </Animated.View>}

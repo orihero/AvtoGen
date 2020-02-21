@@ -56,6 +56,8 @@ export let strings = new LocalizedStrings({
     inWeek: 'За неделю',
     inToday: 'За сегодня',
     continue: 'Продолжить',
-    waiting: 'ОЖИДАЕМ ОТВЕТА'
+    waiting: 'ОЖИДАЕМ ОТВЕТА',
+    orderAccepted: 'ВАША ЗАВКА ПРИНЯТA',
+    cancel: 'Отменить'
   },
 });

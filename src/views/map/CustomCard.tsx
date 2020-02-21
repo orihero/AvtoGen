@@ -86,9 +86,8 @@ let changeValueAt = (source, value, index) => {
 		.concat(source.substr(index + 1, source.length));
 };
 
-const CustomCard = ({ onSubmit, data, setData }: CustomCardProps) => {
+const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 	const [active, setActive] = useState(-1);
-	const [loading, setLoading] = useState(false);
 	const [childStates, setChildStates] = useState('00');
 	const [services, setServices] = useState([]);
 	const [carTypes, setCarTypes] = useState([]);

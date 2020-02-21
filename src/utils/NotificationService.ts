@@ -26,6 +26,7 @@ export enum NotificationActionTypes {
 }
 
 let notificationConsumer = notification => {
+  console.warn(notification.data);
   // switch (notification.data.action_type) {
   //   case NotificationActionTypes.NewCall:
   //     requests.orders
@@ -119,8 +120,8 @@ const checkPermission = async () => {
 const getToken = async () => {
   try {
     let fcmToken = await firebase.messaging().getToken();
-    Clipboard.setString(fcmToken);
-    console.log(fcmToken);
+    // Clipboard.setString(fcmToken);
+    // console.log(fcmToken);
     // requests.auth
     //   .setDeviceToken(tokenProvider(), fcmToken, Platform.OS)
     //   .catch(res => console.warn(res.response));

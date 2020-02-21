@@ -1,26 +1,47 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
-import {colors} from '../../constants';
-import {UserProps} from '../../views/account/OrderCard';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  LayoutAnimation,
+} from 'react-native';
+import { colors } from '../../constants';
+import { UserProps } from '../../views/account/OrderCard';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
-const UserInfo = ({
-  image = 'https://i7.pngguru.com/preview/393/995/701/aspria-fitness-computer-icons-user-clip-art-my-account-icon-thumbnail.jpg',
-  name = 'Николай Соболев',
-  phone = '8 99 000 11 25',
-}: UserProps) => {
+const UserInfo = ({ user, toggleCard, cardVisibility }: UserProps) => {
+  // console.warn(user);
+  let profile = user.profile || user.agent;
   return (
-    <View style={styles.userInfo}>
-      <Image
-        source={{
-          uri: image,
-        }}
-        style={styles.image}
-      />
-      <View style={styles.contact}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.phone}>{phone}</Text>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        toggleCard(!cardVisibility);
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      }}>
+      <View style={styles.userInfo}>
+        <Image
+          source={{
+            uri: profile.avatar,
+          }}
+          style={styles.image}
+        />
+        <View style={styles.contact}>
+          <Text style={styles.name}>{profile.name}</Text>
+          <Text style={styles.phone}>{profile.phone}</Text>
+        </View>
+        {toggleCard && <View style={styles.controller}>
+          <SimpleLineIcons
+            name="arrow-down"
+            size={15}
+            style={{
+              transform: [{ rotate: cardVisibility ? '0deg' : '180deg' }],
+            }}
+          />
+        </View>}
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -28,6 +49,7 @@ const styles = StyleSheet.create({
   userInfo: {
     flexDirection: 'row',
     marginVertical: 10,
+    height: 50,
   },
   image: {
     width: 50,
@@ -47,6 +69,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.accent,
     fontWeight: '100',
+  },
+  controller: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
 });
 

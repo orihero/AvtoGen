@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import logo from '../../assets/images/logo-light.png';
 import { colors } from '../../constants';
 import { strings } from '../../locales/strings';
-import { userLoaded } from '../../redux/actions';
+import { userLoaded, orderLoaded } from '../../redux/actions';
 import NotificationService from '../../utils/NotificationService';
 import requests from '../../api/requests';
 
-const Loader = ({ navigation, userLoaded }) => {
+const Loader = ({ navigation, userLoaded, orderLoaded }) => {
     let bootstrap = async () => {
         let data = await AsyncStorage.getItem('@user');
         if (!data) {
@@ -35,13 +35,23 @@ const Loader = ({ navigation, userLoaded }) => {
             NotificationService.init();
             let tempToken = await NotificationService.getFcmToken()
             if (tempToken) {
-                requests.profile.setToken({ fcm_token: tempToken })
-                    .then(response => {
-                        console.warn(response)
-                    })
-                    .catch(({ response }) => {
-                        console.warn(response)
-                    })
+                try {
+                    let res = await requests.profile.setToken({ fcm_token: tempToken })
+                } catch (error) {
+                    console.warn(error.response);
+                    navigation.navigate('PromptStack')
+                    return
+                }
+            }
+            //* Check if the user has the active booking
+            try {
+                let res = await requests.main.books('accepted');
+                // console.warn("CURRENT ORDER", res.data, res.data.data.length > 0);
+                if (res.data.data.length > 0) {
+                    orderLoaded({ name: 'current', data: res.data.data[0] })
+                }
+            } catch (error) {
+                console.warn(error.response);
             }
             navigation.navigate('Main')
         }
@@ -74,7 +84,8 @@ const mapStateToProps = ({ }) => ({
 })
 
 const mapDispatchToProps = {
-    userLoaded
+    userLoaded,
+    orderLoaded
 }
 
 

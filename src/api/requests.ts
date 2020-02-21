@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export let URL = 'https://api.autogen.uz' /* 'https://3841f7e4.ngrok.io' */;
+export let URL = 'https://api.avtogen.uz' /* 'https://3841f7e4.ngrok.io' */;
 
 let store;
 
@@ -16,7 +16,6 @@ let formData = rawData => {
     Object.keys(rawData).forEach(key => {
 
         if (Array.isArray(rawData[key])) {
-            console.warn('tonka bu');
             let obj = rawData[key];
             for (let index in obj) {
                 form.append(`${key}[${index}]`, obj[index])
@@ -25,9 +24,10 @@ let formData = rawData => {
         }
         if (typeof rawData[key] === 'object') {
             let obj = rawData[key];
-            console.warn('timsoh bu', obj);
+            let i = 0;
             Object.keys(obj).forEach((id, index) => {
-                form.append(`${key}[${index}]`, parseInt(id))
+                if (obj[id])
+                    form.append(`${key}[${i++}]`, parseInt(id))
             })
             return;
         }
@@ -47,7 +47,9 @@ let requests = {
         services: () => axios.get(`${URL}/hand/services`),
         carTypes: () => axios.get(`${URL}/hand/car-types`),
         searchCompanies: (data) => axios.post(`${URL}/hand/search-company`, formData(data)),
-        book: (credentials) => axios.post(`${URL}/booking/book`, formData(credentials))
+        book: (credentials) => axios.post(`${URL}/booking/book`, formData(credentials)),
+        books: (status) => axios.get(`${URL}/booking/client-books?status=${status}`),
+        cancel: (id) => axios.get(`${URL}/booking/reject-book/${id}`)
     },
     user: {
         show: () => axios.get(`${URL}/profile/show`),

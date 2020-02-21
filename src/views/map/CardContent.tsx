@@ -38,10 +38,12 @@ const CardContent = ({
   setData
 }) => {
   let onChange = (index, value) => {
-    if (value) {
+    if (value !== undefined) {
       setData({ ...data, [1]: { ...data['1'], [index]: value } })
       return;
     }
+    console.warn(index);
+
     setData({ ...data, [0]: index })
     proceed(1)
   }
@@ -78,14 +80,14 @@ const CardContent = ({
                         index={index}
                         isLast={index === checkboxes[active].data.length - 1}
                         service={e.service}
-                        isActive={e.service ? data[i][index] : data[i] === index}
+                        isActive={e.service ? data[i][index] : data[i] === item.id}
                         setActive={onChange}
                       />
                     );
                   })}
                 </>
               ) : (
-                  <WheelPicker />
+                  <WheelPicker setData={setData} />
                 )}
             </ScrollView>
           );

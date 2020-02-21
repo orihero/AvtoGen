@@ -48,7 +48,10 @@ let AutoFilter = ({
             {name}{title}
           </Text>
         </View>
-        {service ? <CheckBox value={isActive} onValueChange={() => setActive(index, !isActive)} /> : <DefaultCheckbox isActive={isActive} setActive={() => setActive(index)} {...rest} />}
+        {service ? <CheckBox value={isActive} onValueChange={() => setActive(index, !isActive)} /> : <DefaultCheckbox isActive={isActive} setActive={() => {
+          console.warn(rest.id);
+          setActive(rest.id)
+        }} {...rest} />}
       </View>
     </TouchableWithoutFeedback>
   );

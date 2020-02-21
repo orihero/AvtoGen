@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   LayoutAnimation,
   ActivityIndicator,
 } from 'react-native';
-import {measures, colors} from '../../constants';
+import { measures, colors } from '../../constants';
 
 export interface AnimatedButtonProps {
   fill?: boolean;
@@ -36,46 +36,43 @@ const AnimatedButton = ({
   bold,
 }: AnimatedButtonProps) => {
   const [width, setWidth] = useState(maxSize);
-  const [expanded, setExpanded] = useState(false);
-  let onLayout = ({nativeEvent}) => {
+  const [animation, setAnimation] = useState(new Animated.Value(width));
+  let onLayout = ({ nativeEvent }) => {
     if (width === 0) {
       console.warn(nativeEvent);
       setWidth(nativeEvent.layout.width);
     }
   };
-  let animation = new Animated.Value(width);
   // let animate = () => {
   //   Animated.spring(animation, {toValue: minSize});
   // };
-  let revert = () => {};
-  // let animation = new Animated.Value(width);
-  // let height = animation.interpolate({
-  //   inputRange: [0, width],
-  //   outputRange: [minSize, 55],
-  //   extrapolate: 'clamp',
-  // });
+  let revert = () => {
+    animation.stopAnimation();
+    setWidth(maxSize)
+    Animated.timing(animation, {
+      duration: 100,
+      toValue: maxSize,
+    }).start();
+  };
+
   useEffect(() => {
     if (loading) {
-      // console.warn('Should animate');
-      // animate();
+      console.warn('Should animate');
+      animate();
     } else {
-      // console.warn(`'Should revert'`);
-      // revert();
+      console.warn(`'Should revert'`);
+      revert();
     }
   }, [loading]);
   let animate = () => {
+    animation.stopAnimation();
+    setWidth(minSize)
     Animated.timing(animation, {
       duration: 100,
-      toValue: width === maxSize ? minSize : maxSize,
-    }).start(() => setWidth(width === maxSize ? minSize : maxSize));
+      toValue: minSize,
+    }).start();
   };
   let localPress = () => {
-    animate();
-    if (width === maxSize) {
-      setTimeout(() => {
-        animate();
-      }, 1000);
-    }
     onPress();
   };
   let opacity = animation.interpolate({
@@ -89,20 +86,20 @@ const AnimatedButton = ({
   });
   return (
     <TouchableWithoutFeedback onPress={localPress}>
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         <Animated.View
           onLayout={onLayout}
           style={[
             styles.base,
             fill && styles.fill,
             full && styles.full,
-            {backgroundColor, borderColor, width: animation, height},
+            { backgroundColor, borderColor, width: animation, height },
           ]}>
-          <Animated.Text style={{opacity, fontWeight: bold ? 'bold' : '400'}}>
+          <Animated.Text style={{ opacity, fontWeight: bold ? 'bold' : '400' }}>
             {text}
           </Animated.Text>
           {width === minSize && (
-            <View style={{position: 'absolute'}}>
+            <View style={{ position: 'absolute' }}>
               <ActivityIndicator size={'large'} color={colors.accent} />
             </View>
           )}
