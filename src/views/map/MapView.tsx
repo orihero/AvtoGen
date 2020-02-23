@@ -124,7 +124,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
     let subscribe = () => {
         let current = markers[activeMarker];
         // let services = Object.keys(data['1']);
-        let postData = { payment_type: 'cash', booking_type: 'app', services: data['1'], car_type_id: data['0'], company_id: current.id };
+        let postData = { payment_type: 'cash', booking_type: 'app', services: data['1'], car_type_id: data['0'], company_id: current.id, time: data['2'] };
         console.warn(postData);
         requests.main.book(postData)
             .then((res) => {
@@ -132,16 +132,25 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
             })
             .catch(({ response }) => console.warn(response))
             .finally(() => {
-
             })
         setMessage(strings.waiting)
         setSubscribed(true);
     }
 
+    let arrived = async () => {
+        try {
+            let response = await requests.main.setBookingState(currentOrder.id, 'arrived');
+            console.warn(response);
+            orderLoaded({ name: 'current', data: response.data.data })
+        } catch (error) {
+            console.warn(error);
+        }
+    }
+
     let renderFoundCard = () => {
         let shouldRender = (activeMarker !== -1 && !subscribed && !currentOrder) || currentOrder;
         if (shouldRender)
-            return <FoundCard cancel={cancel} buttonsEnabled={!currentOrder} data={data} setShowRoute={drawRoute} current={markers.length > 0 && activeMarker !== -1 ? markers[activeMarker] : currentOrder.company} subscribe={subscribe} />
+            return <FoundCard arrived={arrived} cancel={cancel} renderButtons={!currentOrder || currentOrder.status !== 'arrived'} buttonsEnabled={!currentOrder} data={data} setShowRoute={drawRoute} current={markers.length > 0 && activeMarker !== -1 ? markers[activeMarker] : currentOrder} subscribe={subscribe} />
         return null
     }
 

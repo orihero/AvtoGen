@@ -14,7 +14,6 @@ export let configureAxios = (storeInstance) => {
 let formData = rawData => {
     let form = new FormData();
     Object.keys(rawData).forEach(key => {
-
         if (Array.isArray(rawData[key])) {
             let obj = rawData[key];
             for (let index in obj) {
@@ -49,7 +48,8 @@ let requests = {
         searchCompanies: (data) => axios.post(`${URL}/hand/search-company`, formData(data)),
         book: (credentials) => axios.post(`${URL}/booking/book`, formData(credentials)),
         books: (status) => axios.get(`${URL}/booking/client-books?status=${status}`),
-        cancel: (id) => axios.get(`${URL}/booking/reject-book/${id}`)
+        cancel: (id) => axios.get(`${URL}/booking/reject-book/${id}`),
+        setBookingState: (id, status) => axios.post(`${URL}/booking/set-status-book`, formData({ booking_id: id, status }))
     },
     user: {
         show: () => axios.get(`${URL}/profile/show`),

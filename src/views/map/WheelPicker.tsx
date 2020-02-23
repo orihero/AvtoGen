@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -39,6 +39,17 @@ const WheelPicker = ({ setData }) => {
     outputRange: [colors.yellow, colors.accent],
     extrapolate: 'clamp',
   });
+  let changeData = ({ hour = pickerData.selectedHour, minute = pickerData.selectedMinute }) => {
+    let dayInTime = dayIndex === 1 ? 24 * 60 * 60 * 1000 : 0;
+    let date = new Date(Date.now() + dayInTime);
+    setData(`${date.getFullYear()}-${date.getMonth() < 10 ? "0" + (date.getMonth() + 1).toString() : date.getMonth() + 1}-${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()} ${hour}:${minute}`)
+  }
+
+  useEffect(() => {
+    console.warn('cha');
+
+    changeData({});
+  }, [dayIndex])
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.title}>{strings.day}</Text>
@@ -74,9 +85,10 @@ const WheelPicker = ({ setData }) => {
             style={styles.picker}
             selectedValue={pickerData.selectedHour}
             itemStyle={{ color: 'black', fontSize: 30, fontWeight: 'bold' }}
-            onValueChange={index =>
-              setPickerData({ ...pickerData, selectedHour: index })
-            }>
+            onValueChange={index => {
+              changeData({ hour: index });
+              setPickerData({ ...pickerData, selectedHour: index });
+            }}>
             {pickerData.hourList.map((value, i) => (
               <PickerItem label={value} value={i} key={i} />
             ))}
@@ -90,9 +102,10 @@ const WheelPicker = ({ setData }) => {
             style={styles.picker}
             selectedValue={pickerData.selectedMinute}
             itemStyle={{ color: 'black', fontSize: 30, fontWeight: 'bold' }}
-            onValueChange={index =>
+            onValueChange={index => {
+              changeData({ minute: index })
               setPickerData({ ...pickerData, selectedMinute: index })
-            }>
+            }}>
             {pickerData.minuteList.map((value, i) => (
               <PickerItem label={value} value={i} key={i} />
             ))}

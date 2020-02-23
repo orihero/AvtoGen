@@ -1,3 +1,4 @@
+import { orderLoaded } from './../redux/actions/order';
 // import {
 //   setCall,
 //   setActiveCalls,
@@ -25,47 +26,60 @@ export enum NotificationActionTypes {
   CallCompleted = 'call_completed',
 }
 
-let notificationConsumer = notification => {
+let notificationConsumer = async notification => {
   console.warn(notification.data);
-  // switch (notification.data.action_type) {
-  //   case NotificationActionTypes.NewCall:
-  //     requests.orders
-  //       .getCalls(tokenProvider())
-  //       .then(res => {
-  //         store.dispatch(setActiveCalls(res.data.data));
-  //       })
-  //       .catch(res => {
-  //         console.warn(res.response);
-  //       });
-  //     break;
-  //   case NotificationActionTypes.CallCancelled:
-  //     requests.orders
-  //       .getCall(notification.data.call, tokenProvider())
-  //       .then(res => {
-  //         store.dispatch(setCall(res.data.data));
-  //       })
-  //       .catch(res => {
-  //         console.warn(res.response);
-  //       });
-  //     break;
-  //   case NotificationActionTypes.CallCompleted:
-  //     requests.orders
-  //       .getCall(notification.data.call, tokenProvider())
-  //       .then(res => {
-  //         store.dispatch(setCall(res.data.data));
-  //       })
-  //       .catch(res => {
-  //         console.warn(res.response);
-  //       });
-  //     break;
-  //   case NotificationActionTypes.DriverArrived:
-  //     store.dispatch(setCallArrived(true));
-  //     break;
-  //   default:
-  //     console.warn('UNHANDLED ACTION');
-  //     console.warn(notification.data);
-  //     break;
-  // }
+  switch (notification.data.actionType) {
+    case "accepted": {
+      try {
+        let { data } = await requests.main.books('accepted');
+        store.dispatch(orderLoaded({ name: 'current', data: data.data[0] }))
+      } catch (error) {
+        if (!error.response)
+          console.warn(error);
+        else {
+          console.warn(error.response);
+        }
+      }
+      return
+    }
+    //   case NotificationActionTypes.NewCall:
+    //     requests.orders
+    //       .getCalls(tokenProvider())
+    //       .then(res => {
+    //         store.dispatch(setActiveCalls(res.data.data));
+    //       })
+    //       .catch(res => {
+    //         console.warn(res.response);
+    //       });
+    //     break;
+    //   case NotificationActionTypes.CallCancelled:
+    //     requests.orders
+    //       .getCall(notification.data.call, tokenProvider())
+    //       .then(res => {
+    //         store.dispatch(setCall(res.data.data));
+    //       })
+    //       .catch(res => {
+    //         console.warn(res.response);
+    //       });
+    //     break;
+    //   case NotificationActionTypes.CallCompleted:
+    //     requests.orders
+    //       .getCall(notification.data.call, tokenProvider())
+    //       .then(res => {
+    //         store.dispatch(setCall(res.data.data));
+    //       })
+    //       .catch(res => {
+    //         console.warn(res.response);
+    //       });
+    //     break;
+    //   case NotificationActionTypes.DriverArrived:
+    //     store.dispatch(setCallArrived(true));
+    //     break;
+    default:
+      console.warn('UNHANDLED ACTION');
+      console.warn(notification.data);
+      break;
+  }
 };
 
 function init() {

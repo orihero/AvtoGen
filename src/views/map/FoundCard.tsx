@@ -17,7 +17,8 @@ import { strings } from '../../locales/strings';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Text from '../../components/common/CustomText';
 import Rating from '../../components/Rating';
-const FoundCard = ({ subscribe, current, setShowRoute, data, buttonsEnabled, cancel }) => {
+const FoundCard = ({ subscribe, current: parent, setShowRoute, data, buttonsEnabled, cancel, arrived, renderButtons }) => {
+  let current = parent.company ? parent.company : parent
   let isExpanded = false;
   if (!current) {
     return null;
@@ -51,6 +52,43 @@ const FoundCard = ({ subscribe, current, setShowRoute, data, buttonsEnabled, can
   };
 
   let renderContent = () => {
+    console.warn(parent.status);
+
+    if (parent.status === 'done') {
+      return <>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.contentContainer}>
+            <View style={styles.iconWrapper}>
+              <Icons
+                name="check"
+                size={40}
+                color={colors.white}
+                style={{ transform: [{ translateY: 3 }] }}
+              />
+            </View>
+            <Text style={styles.lightText}>{strings.carWash}</Text>
+            <Text style={styles.nameText}>AVTOritet Car-Wash</Text>
+            <Text style={styles.thanksText}>{strings.thanks}</Text>
+            <Rating activeCount={rating} setActiveCount={setRating} count={5} />
+            <Text style={[styles.lightText, { fontSize: 18 }]}>{strings.rate}</Text>
+          </View>
+          <View style={styles.commentWrapper}>
+            <TextInput
+              multiline
+              numberOfLines={2}
+              placeholder={strings.leaveComment}
+            />
+          </View>
+        </ScrollView>
+        <RoundButton
+          fill
+          full
+          text={strings.rate}
+          backgroundColor={colors.yellow}
+          onPress={subscribe}
+        />
+      </>
+    }
     if (!subscribed) {
       return <Animated.ScrollView
         showsVerticalScrollIndicator={false}
@@ -121,39 +159,6 @@ const FoundCard = ({ subscribe, current, setShowRoute, data, buttonsEnabled, can
         </View>
       </Animated.ScrollView>
     }
-    return <>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.contentContainer}>
-          <View style={styles.iconWrapper}>
-            <Icons
-              name="check"
-              size={40}
-              color={colors.white}
-              style={{ transform: [{ translateY: 3 }] }}
-            />
-          </View>
-          <Text style={styles.lightText}>{strings.carWash}</Text>
-          <Text style={styles.nameText}>AVTOritet Car-Wash</Text>
-          <Text style={styles.thanksText}>{strings.thanks}</Text>
-          <Rating activeCount={rating} setActiveCount={setRating} count={5} />
-          <Text style={[styles.lightText, { fontSize: 18 }]}>{strings.rate}</Text>
-        </View>
-        <View style={styles.commentWrapper}>
-          <TextInput
-            multiline
-            numberOfLines={2}
-            placeholder={strings.leaveComment}
-          />
-        </View>
-      </ScrollView>
-      <RoundButton
-        fill
-        full
-        text={strings.rate}
-        backgroundColor={colors.yellow}
-        onPress={subscribe}
-      />
-    </>
   }
 
   let contentHeight = Animated.subtract(0, height).interpolate({
@@ -205,10 +210,10 @@ const FoundCard = ({ subscribe, current, setShowRoute, data, buttonsEnabled, can
                     <Text style={styles.location}>
                       {current.company_address}
                     </Text>
-                    <Text style={styles.title}>{current.services ? current.services.reduce((prev, el) => data['1'][el.id] ? el.price ? prev + el.price : prev + 100 : prev, 0) : ''}</Text>
+                    <Text style={styles.title}>{parent.total_cost ? parent.total_cost : current.services ? current.services.reduce((prev, el) => data['1'][el.id] ? el.price ? prev + el.price : prev + 100 : prev, 0) : ""}</Text>
                   </View>
                   <View style={styles.distanceWrapper}>
-                    <Text style={styles.distance}>1.7 Km</Text>
+                    <Text style={styles.distance}>{/* 1.7 Km */}</Text>
                   </View>
                 </View>
               </TouchableWithoutFeedback>
@@ -217,24 +222,24 @@ const FoundCard = ({ subscribe, current, setShowRoute, data, buttonsEnabled, can
           </PanGestureHandler>
           {renderContent()}
         </View>
-        {!subscribed && <Animated.View style={[styles.row, { transform: [{ translateY }] }]}>
+        {renderButtons && <Animated.View style={[styles.row, { transform: [{ translateY }] }]}>
           <View style={{ flex: 1 }}>
             <RoundButton
               borderColor={colors.black}
               backgroundColor={colors.white}
               fill
               full
-              text={strings.route}
-              onPress={() => setShowRoute(true)}
+              text={!buttonsEnabled ? strings.cancel : strings.route}
+              onPress={!buttonsEnabled ? cancel : () => setShowRoute(true)}
             />
           </View>
           <View style={{ flex: 1 }}>
             <RoundButton
-              onPress={!buttonsEnabled ? cancel : subscribe}
+              onPress={!buttonsEnabled ? arrived : subscribe}
               fill
               full
               backgroundColor={colors.yellow}
-              text={!buttonsEnabled ? strings.cancel : strings.subscribe}
+              text={!buttonsEnabled ? strings.arrived : strings.subscribe}
             />
           </View>
         </Animated.View>}

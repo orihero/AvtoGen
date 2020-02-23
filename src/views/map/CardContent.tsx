@@ -87,7 +87,7 @@ const CardContent = ({
                   })}
                 </>
               ) : (
-                  <WheelPicker setData={setData} />
+                  <WheelPicker setData={time => setData({ ...data, 2: time })} />
                 )}
             </ScrollView>
           );

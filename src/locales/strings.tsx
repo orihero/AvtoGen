@@ -58,6 +58,7 @@ export let strings = new LocalizedStrings({
     continue: 'Продолжить',
     waiting: 'ОЖИДАЕМ ОТВЕТА',
     orderAccepted: 'ВАША ЗАВКА ПРИНЯТA',
-    cancel: 'Отменить'
+    cancel: 'Отменить',
+    arrived: 'Я прибыль'
   },
 });
