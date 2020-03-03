@@ -97,6 +97,8 @@ const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 	useEffect(() => {
 		requests.main.services().then(res => {
 			setServices(res.data.data)
+			console.warn("SERV", res.data.data);
+
 		});
 		requests.main.carTypes()
 			.then(res => {

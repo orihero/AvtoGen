@@ -6,7 +6,9 @@ let store;
 
 export let configureAxios = (storeInstance) => {
     axios.interceptors.request.use((req) => {
-        req.headers = { Authorization: `Bearer ${storeInstance.getState().user.token}` }
+        console.warn(storeInstance.getState().user.settings.language);
+
+        req.headers = { Authorization: `Bearer ${storeInstance.getState().user.token}`, "Accept-Language": storeInstance.getState().user.settings.language }
         return req;
     })
 }

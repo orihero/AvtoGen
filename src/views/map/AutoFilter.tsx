@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableWithoutFeedback, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, StyleSheet, Image, Platform, Switch } from 'react-native';
 import { colors, Icons } from '../../constants';
 import DefaultCheckbox from '../../components/common/DefaultCheckbox';
 import CheckBox from '@react-native-community/checkbox'
@@ -48,7 +48,7 @@ let AutoFilter = ({
             {name}{title}
           </Text>
         </View>
-        {service ? <CheckBox value={isActive} onValueChange={() => setActive(index, !isActive)} /> : <DefaultCheckbox isActive={isActive} setActive={() => {
+        {service ? Platform.select({ ios: <Switch value={isActive} onValueChange={() => setActive(index, !isActive)} />, android: <CheckBox value={isActive} onValueChange={() => setActive(index, !isActive)} /> }) : <DefaultCheckbox isActive={isActive} setActive={() => {
           console.warn(rest.id);
           setActive(rest.id)
         }} {...rest} />}
