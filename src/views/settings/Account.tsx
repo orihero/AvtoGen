@@ -64,7 +64,7 @@ const Account = ({ navigation, user, userLoggedIn, userLoggedOut }) => {
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <MenuItem text={strings.myOrders} iconName="list" onPress={() => navigation.navigate('History')} />
                     <MenuItem text={strings.call} iconName={'headphone'} onPress={() => Linking.openURL('tel://+998998970597')} />
-                    <MenuItem text={strings.settings} iconName={'gear'} />
+                    <MenuItem text={strings.settings} iconName={'gear'} onPress={() => navigation.navigate('Settings')} />
                 </View>
             </View>
             <View style={styles.footer}>

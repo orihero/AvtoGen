@@ -1,31 +1,14 @@
-import React, { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import RoundButton, { RoundButtonProps } from '../../components/common/RoundButton';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, FlatList } from 'react-native';
+import RoundButton, {
+  RoundButtonProps,
+} from '../../components/common/RoundButton';
 import { colors } from '../../constants';
-import { strings } from '../../locales/strings';
-import OrderCard, { OrderProps } from './OrderCard';
-
-export let demoOrder: OrderProps = {
-  properties: [
-    {
-      title: 'Дата посещения',
-      rightText: '16:35',
-      description: '03.12.2019',
-    },
-    {
-      title: 'Тип автомобиля',
-      icon: 'light',
-      description: 'Легковой',
-    },
-    {
-      title: 'Тип услуги',
-      description: 'Бесконтактная мойка кузова автомобиля, коврики пороги',
-    },
-    { title: 'Цена умлуги', price: '40 000 сум' },
-  ],
-  user: null,
-};
-
+import strings from '../../locales/strings';
+import OrderItem from './OrderItem';
+import { demoOrder } from '../account/Account';
+import OrderPill from '../../components/OrderPill';
+import request from '../../api/requests';
 
 let activeButton: RoundButtonProps = {
   backgroundColor: colors.yellow,
@@ -39,11 +22,18 @@ let inActiveButton: RoundButtonProps = {
 
 const History = () => {
   const [activeIndex, setactiveIndex] = useState(0);
-
+  const [data, setData] = useState([]);
+  let effect = async () => {
+    let res = await request.main.books('');
+    setData(res.data.data)
+  }
+  useEffect(() => {
+    effect()
+  }, [])
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <RoundButton
+        {/* <RoundButton
           full
           flex
           borderColor={colors.lightGray}
@@ -56,13 +46,12 @@ const History = () => {
           flex
           backgroundColor={colors.yellow}
           text={strings.inToday}
-        />
+        /> */}
       </View>
       <FlatList
-        showsVerticalScrollIndicator={false}
         keyExtractor={(e, i) => i.toString()}
-        renderItem={({ item, ...props }) => <OrderCard {...props} {...item} />}
-        data={[demoOrder, demoOrder, demoOrder, demoOrder]}
+        renderItem={({ item, ...props }) => <OrderPill {...props} {...{ item }} />}
+        data={data}
       />
     </View>
   );
@@ -80,4 +69,3 @@ const styles = StyleSheet.create({
 });
 
 export { History };
-

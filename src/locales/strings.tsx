@@ -21,7 +21,8 @@ export let strings = new LocalizedStrings({
     main: 'Главная',
     route: 'Маршрут',
     subscribe: 'Записаться',
-    found: 'Нашлось 5 рядом',
+    found: 'Нашлось',
+    nearby: 'рядом',
     settings: 'Настройки',
     exit: 'Выход',
     myOrders: 'Мои заказы',
@@ -59,6 +60,8 @@ export let strings = new LocalizedStrings({
     waiting: 'ОЖИДАЕМ ОТВЕТА',
     orderAccepted: 'ВАША ЗАВКА ПРИНЯТA',
     cancel: 'Отменить',
-    arrived: 'Я прибыль'
+    arrived: 'Я прибыль',
+    typeOfService: 'Сервис',
+    selectedServices: 'Выбранные услуги'
   },
 });

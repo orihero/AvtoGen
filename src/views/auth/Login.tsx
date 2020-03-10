@@ -121,7 +121,7 @@ const Login = ({ navigation, userLoggedIn }) => {
             value={confirmed ? code : value}
             exceedController={setvalue}
             pattern={
-              confirmed ? '_ _ _ _ _' : '+998|(_ _) _ _ _  _ _  _ _'
+              confirmed ? '_ _ _ _ _' : '+998 (_ _) _ _ _  _ _  _ _'
             }
           />
           {confirmed && (

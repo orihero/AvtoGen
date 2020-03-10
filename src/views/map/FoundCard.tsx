@@ -90,12 +90,30 @@ const FoundCard = ({ subscribe, current: parent, setShowRoute, data, buttonsEnab
       </>
     }
     if (!subscribed) {
+      // console.warn(current.services);
+      // console.warn(data[1]);
+      console.warn(data[0]);
+      console.warn(data[1]);
+      current.services.reduce((prev, el) => data['1'][el.id] ? el.price ? prev + el.price : prev + 100 : prev, 0)
+
+      let services = current.services.reduce((prev, service) => {
+        if (data['1'][service.id] && data['0'] === service.car_type_id) {
+          return [...prev, service]
+        } else return prev
+      }, []);
+      console.warn(services);
+
       return <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         style={{ height: contentHeight, maxHeight: 300 }}>
         <View style={styles.content}>
           <View style={styles.borderTop}>
-            {current.phones && current.phones.map((e, i) => <Text key={i} style={styles.mainText}>{e}</Text>)}
+            <Text style={styles.bold}>{strings.selectedServices} :</Text>
+            <View>
+              {services.map(e => {
+                return <Text style={styles.lightText}>{e.title}</Text>
+              })}
+            </View>
           </View>
           <View style={[styles.borderTop, styles.timeWrapper]}>
             <TouchableWithoutFeedback
@@ -210,7 +228,7 @@ const FoundCard = ({ subscribe, current: parent, setShowRoute, data, buttonsEnab
                     <Text style={styles.location}>
                       {current.company_address}
                     </Text>
-                    <Text style={styles.title}>{parent.total_cost ? parent.total_cost : current.services ? current.services.reduce((prev, el) => data['1'][el.id] ? el.price ? prev + el.price : prev + 100 : prev, 0) : ""}</Text>
+                    {/* <Text style={styles.title}>{}</Text> */}
                   </View>
                   <View style={styles.distanceWrapper}>
                     <Text style={styles.distance}>{/* 1.7 Km */}</Text>

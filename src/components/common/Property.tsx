@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import {colors, Icons} from '../../constants';
+import { View, StyleSheet, Image } from 'react-native';
+import { colors, Icons } from '../../constants';
 import Text from './CustomText';
 
 export interface PropertyProps {
@@ -24,14 +24,14 @@ const Property = ({
         <Text style={styles.titleText}>{title}</Text>
         {!price && <Text style={styles.descriptionText}>{description}</Text>}
         {price && (
-          <Text style={{...styles.rightText, fontSize: 20, fontWeight: '900'}}>
+          <Text style={{ ...styles.rightText, fontSize: 20, fontWeight: '900' }}>
             {price}
           </Text>
         )}
       </View>
       <View style={styles.right}>
-        {icon && <Icons color={colors.accent} size={18} name={icon} />}
-        {rightText && <Text style={styles.rightText}>{rightText}</Text>}
+        {icon && <Image source={{ uri: icon }} style={{ width: 40, height: 22.4 }} />}
+        {rightText ? <Text style={styles.rightText}>{rightText}</Text> : <></>}
       </View>
     </View>
   );
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     borderColor: colors.extraGray,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginVertical: 10,
   },
   titleText: {
     fontSize: 18,

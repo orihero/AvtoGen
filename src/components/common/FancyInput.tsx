@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {colors} from '../../constants';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { colors } from '../../constants';
 
 interface FancyInputProps {
   pattern?: string;
@@ -18,8 +18,8 @@ const FancyInput = ({
     let temp = '';
     for (let part of parts) {
       if (part === '_') {
-        content.push({type: 'text', content: temp});
-        content.push({type: 'input'});
+        content.push({ type: 'text', content: temp });
+        content.push({ type: 'input' });
         temp = '';
         continue;
       }
@@ -35,7 +35,7 @@ const FancyInput = ({
   let counter = 0;
   return (
     <View style={styles.container}>
-      {generateContent().map(({type, content}) => {
+      {generateContent().map(({ type, content }) => {
         switch (type) {
           case 'text':
             return <Text style={styles.text}>{content}</Text>;
@@ -43,7 +43,7 @@ const FancyInput = ({
             counter++;
             return (
               <Text style={styles.text}>
-                {value[counter - 1] ? value[counter - 1] : '_'}
+                {value[counter - 1] ? value[counter - 1] : ' '}
               </Text>
             );
           default:
@@ -55,7 +55,7 @@ const FancyInput = ({
 };
 
 const styles = StyleSheet.create({
-  container: {flexDirection: 'row'},
+  container: { flexDirection: 'row' },
   text: {
     color: colors.white,
     fontSize: 18,

@@ -207,8 +207,13 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
                 console.warn(response)
             })
             .finally(() => {
+                console.warn(userLocation);
                 if (map && markers && markers.length > 0) {
-                    map.current.fitToCoordinates(markers.map(e => (getCoord(e))));
+                    map.current.animateToRegion({
+                        ...userLocation,
+                        latitudeDelta: 0.1,
+                        longitudeDelta: 0.1,
+                    });
                 }
                 setCardVisible(false);
                 setLoading(false);
@@ -271,7 +276,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
             {Platform.OS === 'ios' && <StatusBar barStyle="dark-content" />}
 
             <Header
-                text={cardVisible ? strings.main : strings.found}
+                text={cardVisible ? strings.main : `${strings.found} ${markers.length} ${strings.nearby}`}
                 menuPress={() => {
                     navigation.navigate('Account');
                 }}
@@ -281,6 +286,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
                     setactiveMarker(-1);
                     setMessage(null)
                 }}
+
                 isBack={activeMarker !== -1}
             />
             {

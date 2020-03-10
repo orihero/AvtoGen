@@ -9,7 +9,8 @@ import {
   SelectLanguage,
   FillInfo,
   Loader,
-  History
+  History,
+  Settings
 } from '../views/index';
 import { createStackNavigator } from 'react-navigation-stack';
 import InnerHeader from '../components/InnerHeader';
@@ -71,6 +72,14 @@ let Main = createStackNavigator(
       navigationOptions: {
         header: ({ navigation, ...rest }) => (
           <InnerHeader back="CustomMap" back {...rest} navigation={navigation} />
+        ),
+      },
+    },
+    Settings: {
+      screen: Settings,
+      navigationOptions: {
+        header: ({ navigation, ...rest }) => (
+          <InnerHeader back="Account" back {...rest} navigation={navigation} />
         ),
       },
     },
