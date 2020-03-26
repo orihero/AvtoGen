@@ -8,26 +8,26 @@ import {
 	Platform,
 	StatusBar,
 	StyleSheet,
-	View,
-	Dimensions
+	View
 } from "react-native";
+import firebase from "react-native-firebase";
 import MapView, { Marker } from "react-native-maps";
 import MapsWithDirection from "react-native-maps-directions";
 import { connect } from "react-redux";
 import requests from "../../api/requests";
 import markerIcon from "../../assets/images/marker.png";
 import selectedMarker from "../../assets/images/selectedMarker.png";
+import RoundButton from "../../components/common/RoundButton";
 import Header from "../../components/Header";
 import MapMessage from "../../components/MapMessage";
 import { colors } from "../../constants";
 import { strings } from "../../locales/strings";
+import { orderLoaded } from "../../redux/actions";
 import { openInMaps } from "../../utils/maps";
-import ActiveOrderCard from "./ActiveOrderCard";
+import { channel } from "../../utils/NotificationService";
+import { warnUser } from "../../utils/warn";
 import CustomCard from "./CustomCard";
 import FoundCard from "./FoundCard";
-import { orderLoaded } from "../../redux/actions";
-import { warnUser } from "../../utils/warn";
-import RoundButton from "../../components/common/RoundButton";
 
 interface Region {
 	latitude: Number;
@@ -40,7 +40,7 @@ let API_KEY = "AIzaSyCoMtd7r21tetH1XMUTP9iee4R6qSGbn4k";
 
 const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	const [cardVisible, setCardVisible] = useState(false);
-	let subscribed = currentOrder && currentOrder.status === "waiting";
+	let subscribed = currentOrder && currentOrder.status === "new";
 	const [markers, setMarkers] = useState([]);
 	const [userLocation, setUserLocation] = useState(null);
 	const [showRoute, setShowRoute] = useState(false);
@@ -49,11 +49,19 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	const [activeMarker, setactiveMarker] = useState(-1);
 	const [loading, setLoading] = useState(false);
 	const map = useRef(null);
-	let animation = new Animated.Value(0);
-
+	const [animation, setAnimation] = useState(new Animated.Value(0));
 	useEffect(() => {
 		requests.main.companies().then(res => {
 			setMarkers(res.data.data);
+			if (currentOrder) {
+				animation.stopAnimation();
+				let index = res.data.data.findIndex(
+					e => e.id === currentOrder.company.id
+				);
+				console.warn(currentOrder);
+				setactiveMarker(index);
+				animate();
+			}
 		});
 		requestPermissions();
 	}, []);
@@ -70,8 +78,32 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 		}
 	}, [currentOrder]);
 
+	let createLocalNotification = minutes => {
+		let notification = new firebase.notifications.Notification()
+			.setNotificationId(minutes)
+			.setTitle(strings.appName)
+			.setBody(strings.youAreSubscribed)
+			.setData({})
+			.android.setChannelId("insider");
+		const date = new Date();
+		date.setMinutes(date.getMinutes() + minutes);
+		firebase.notifications().scheduleNotification(notification, {
+			fireDate: date.getTime()
+		});
+	};
+
 	useEffect(() => {
-		if (subscribed) animate();
+		// console.warn(currentOrder.status, "SUBSCRIBED", subscribed);
+
+		if (subscribed) {
+			let index = markers.findIndex(
+				e => e.id === currentOrder.company.id
+			);
+			console.warn(currentOrder);
+			setactiveMarker(index);
+			setMessage(strings.waiting);
+			animate();
+		}
 	}, [subscribed]);
 
 	let onMapReady = () => {
@@ -132,6 +164,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			// 	orderLoaded({ name: "current", data: null });
 			// }
 			setMessage(null);
+			setactiveMarker(-1);
 			orderLoaded({ name: "current", data: null });
 		} catch (error) {
 			console.warn(error);
@@ -158,7 +191,6 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			.catch(({ response }) => console.warn(response))
 			.finally(() => {});
 		setMessage(strings.waiting);
-		// setSubscribed(true);
 	};
 
 	let arrived = async () => {
@@ -175,28 +207,6 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	};
 
 	let renderFoundCard = () => {
-		let shouldRender =
-			(activeMarker !== -1 && !subscribed && !currentOrder) ||
-			currentOrder;
-		if (shouldRender)
-			return (
-				<FoundCard
-					arrived={arrived}
-					cancel={cancel}
-					renderButtons={
-						!currentOrder || currentOrder.status !== "arrived"
-					}
-					buttonsEnabled={!currentOrder}
-					data={data}
-					setShowRoute={drawRoute}
-					current={
-						markers.length > 0 && activeMarker !== -1
-							? markers[activeMarker]
-							: currentOrder
-					}
-					subscribe={subscribe}
-				/>
-			);
 		if (subscribed) {
 			return (
 				<View
@@ -219,6 +229,28 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 				</View>
 			);
 		}
+		let shouldRender =
+			(activeMarker !== -1 && !subscribed && !currentOrder) ||
+			currentOrder;
+		if (shouldRender)
+			return (
+				<FoundCard
+					arrived={arrived}
+					cancel={cancel}
+					renderButtons={
+						!currentOrder || currentOrder.status !== "arrived"
+					}
+					buttonsEnabled={!currentOrder}
+					data={data}
+					setShowRoute={drawRoute}
+					current={
+						markers.length > 0 && activeMarker !== -1
+							? markers[activeMarker]
+							: currentOrder
+					}
+					subscribe={subscribe}
+				/>
+			);
 		return null;
 	};
 
@@ -276,6 +308,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			.searchCompanies({ car_type_id: data["0"], services: data["1"] })
 			.then(res => {
 				if (!res.data.data || res.data.data.length <= 0) {
+					return;
 				}
 				setMarkers(res.data.data);
 			})
@@ -327,6 +360,42 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 					markers.map((e, i) => {
 						if (currentOrder && currentOrder.company.id !== e.id) {
 							return null;
+						}
+						if (!subscribed) {
+							return (
+								<Marker
+									onPress={() => {
+										map.current.animateToRegion({
+											...{
+												latitude:
+													parseFloat(
+														e.location_lat
+													) || 1,
+												longitude:
+													parseFloat(
+														e.location_lng
+													) || 1
+											},
+											latitudeDelta: 0.1,
+											longitudeDelta: 0.1
+										});
+										setactiveMarker(i);
+										setCardVisible(false);
+									}}
+									title={e.title}
+									image={
+										activeMarker === i
+											? selectedMarker
+											: markerIcon
+									}
+									coordinate={{
+										latitude:
+											parseFloat(e.location_lat) || 1,
+										longitude:
+											parseFloat(e.location_lng) || 1
+									}}
+								/>
+							);
 						}
 						return (
 							<Marker
@@ -395,7 +464,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 				text={
 					cardVisible
 						? strings.main
-						: currentOrder
+						: currentOrder && !subscribed
 						? strings.orderAccepted
 						: `${strings.found} ${markers.length} ${strings.nearby}`
 				}
@@ -404,7 +473,6 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 				}}
 				backPress={() => {
 					setCardVisible(true);
-					// setSubscribed(false);
 					setactiveMarker(-1);
 					setMessage(null);
 				}}

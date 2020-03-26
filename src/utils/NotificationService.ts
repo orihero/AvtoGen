@@ -44,12 +44,13 @@ let notificationConsumer = async notification => {
 	}
 };
 
+export const channel = new firebase.notifications.Android.Channel(
+	"insider",
+	"insider channel",
+	firebase.notifications.Android.Importance.Max
+).setDescription("Updates");
+
 function init() {
-	const channel = new firebase.notifications.Android.Channel(
-		"insider",
-		"insider channel",
-		firebase.notifications.Android.Importance.Max
-	).setDescription("Updates");
 	let channelId = firebase.notifications().android.createChannel(channel);
 	checkPermission();
 	createNotificationListeners(channelId);

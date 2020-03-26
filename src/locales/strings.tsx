@@ -64,6 +64,8 @@ export let strings = new LocalizedStrings({
 		typeOfService: "Сервис",
 		selectedServices: "Выбранные услуги",
 		price: "Цена",
-		total: "Итого"
+		total: "Итого",
+		appName: "Avtogen",
+		youAreSubscribed: "Вы записаны через 1 минут на автомойку"
 	}
 });

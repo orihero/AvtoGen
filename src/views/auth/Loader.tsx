@@ -46,12 +46,6 @@ const Loader = ({ navigation, userLoaded, orderLoaded }) => {
 		//* Check if the user has the active booking
 		try {
 			let res = await requests.user.show();
-			console.warn(
-				res.data.data.latest_book &&
-					res.data.data.latest_book.status !== "done" &&
-					res.data.data.latest_book.status !== "canceled"
-			);
-
 			if (
 				res.data.data.latest_book &&
 				res.data.data.latest_book.status !== "done" &&
@@ -67,11 +61,6 @@ const Loader = ({ navigation, userLoaded, orderLoaded }) => {
 					)
 				});
 			}
-			// let res = await requests.main.books('accepted');
-			// // console.warn("CURRENT ORDER", res.data, res.data.data.length > 0);
-			// if (res.data.data.length > 0) {
-			//     orderLoaded({ name: 'current', data: res.data.data[0] })
-			// }
 		} catch (error) {
 			console.warn(error.response);
 		}

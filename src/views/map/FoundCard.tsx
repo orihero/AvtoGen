@@ -370,19 +370,23 @@ const FoundCard = ({
 								}
 							/>
 						</View>
-						<View style={{ flex: 1 }}>
-							<RoundButton
-								onPress={!buttonsEnabled ? arrived : subscribe}
-								fill
-								full
-								backgroundColor={colors.yellow}
-								text={
-									!buttonsEnabled
-										? strings.arrived
-										: strings.subscribe
-								}
-							/>
-						</View>
+						{buttonsEnabled && (
+							<View style={{ flex: 1 }}>
+								<RoundButton
+									onPress={
+										!buttonsEnabled ? arrived : subscribe
+									}
+									fill
+									full
+									backgroundColor={colors.yellow}
+									text={
+										!buttonsEnabled
+											? strings.arrived
+											: strings.subscribe
+									}
+								/>
+							</View>
+						)}
 					</Animated.View>
 				)}
 			</Animated.View>
