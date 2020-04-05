@@ -17,11 +17,10 @@ export enum NotificationActionTypes {
 	NewCall = "new_call",
 	CallCancelled = "call_canceled",
 	DriverArrived = "call_almost_arrived",
-	CallCompleted = "call_completed"
+	CallCompleted = "call_completed",
 }
 
-let notificationConsumer = async notification => {
-	console.warn(notification.data);
+let notificationConsumer = async (notification) => {
 	switch (notification.data.actionType) {
 		case "accepted": {
 			try {
@@ -56,10 +55,10 @@ function init() {
 	createNotificationListeners(channelId);
 }
 
-const createNotificationListeners = async channelId => {
+const createNotificationListeners = async (channelId) => {
 	try {
 		let notifications = firebase.notifications();
-		notifications.onNotification(async notification => {
+		notifications.onNotification(async (notification) => {
 			notification.android.setChannelId(channelId).setSound("default");
 			firebase.notifications().displayNotification(notification);
 			if (AppState.currentState.match(/active/)) {
@@ -67,9 +66,7 @@ const createNotificationListeners = async channelId => {
 				clearBadge();
 			}
 		});
-		notifications.onNotificationOpened(async notification => {
-			// Process data of the notification
-			console.warn(notification.notification.data);
+		notifications.onNotificationOpened(async (notification) => {
 			notificationConsumer(notification);
 			clearBadge();
 		});
@@ -122,7 +119,7 @@ const requestPermission = async () => {
 	}
 };
 
-const backgroundPushes = async message => {
+const backgroundPushes = async (message) => {
 	if (AppState.currentState.match(/active/)) {
 		return Promise.resolve();
 	}
