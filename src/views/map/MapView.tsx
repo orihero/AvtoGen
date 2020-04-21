@@ -163,6 +163,12 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	};
 
 	let subscribe = () => {
+		if (typeof data[0] !== "boolean" || !data[1]) {
+			setCardVisible(true);
+			setactiveMarker(-1);
+			warnUser(strings.selectAuto);
+			return;
+		}
 		let current = markers[activeMarker];
 		// let services = Object.keys(data['1']);
 		let postData = {

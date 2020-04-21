@@ -66,8 +66,8 @@ export let strings = new LocalizedStrings({
 		total: "Итого",
 		appName: "Avtogen",
 		youAreSubscribed: "Вы записаны через 1 минут на автомойку",
-		acceptAgreement:
-			"Нажимая кнопку «Продолжить» я принимаю условия пользовательского соглашения"
+		acceptAgreement: "Нажимая кнопку «Продолжить» я принимаю условия ",
+		pravicyAgreemnt: "Пользовательского соглашения"
 	},
 	en: {
 		firstSlider: "Ручная мойка кузова нано шампунем",
@@ -116,8 +116,7 @@ export let strings = new LocalizedStrings({
 		name: "Введите имя",
 		surname: "Введите фамилию",
 		skip: "Пропустить",
-		confirmCode: `Введите присланный вам
-смс код `,
+		confirmCode: `Введите смс код `,
 		second: "сек",
 		connectionError: "Соединение прервано",
 		somethingWentWrong: "Что то пошло не так!",

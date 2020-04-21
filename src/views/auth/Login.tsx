@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dimensions, Image, StyleSheet, View } from "react-native";
+import { Dimensions, Image, StyleSheet, View, Linking } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import SafeAreaView from "react-native-safe-area-view";
 import { connect } from "react-redux";
@@ -39,7 +39,7 @@ const Login = ({ navigation, userLoggedIn }) => {
 			return;
 		}
 		requests.auth
-			.login({ phone: value })
+			.login({ phone: value.substr(1, value.length) })
 			.then(res => {
 				console.warn(res.data.data);
 				setData(res.data.data);
@@ -130,18 +130,36 @@ const Login = ({ navigation, userLoggedIn }) => {
 			<View style={[styles.centeredFlex, { width }]}>
 				<TextInput
 					style={styles.phoneInput}
-					placeholder={strings.enterPhoneNumber}
+					placeholder={
+						!confirmed
+							? strings.enterPhoneNumber
+							: strings.confirmCode
+					}
 					maxLength={13}
 					onFocus={onPhoneFocus}
-					value={value}
+					value={!confirmed ? value : code}
 					keyboardType={"phone-pad"}
-					onChangeText={e => setvalue(e)}
+					onChangeText={e => {
+						if (confirmed) {
+							setCode(e);
+							return;
+						}
+						setvalue(e);
+					}}
 				/>
 			</View>
 			<View style={styles.flexSpaced}>
-				<Text style={styles.agreementText}>
-					{strings.acceptAgreement}
-				</Text>
+				<View>
+					<Text style={styles.agreementText}>
+						{strings.acceptAgreement}
+					</Text>
+					<Text
+						style={{ color: colors.lightBlue, textAlign: "center" }}
+						onPress={() => Linking.openURL("https://avtogen.uz")}
+					>
+						{strings.pravicyAgreemnt}
+					</Text>
+				</View>
 				<RoundButton
 					backgroundColor={colors.accent}
 					fill
@@ -150,6 +168,7 @@ const Login = ({ navigation, userLoggedIn }) => {
 					full
 					loading={loading}
 					big
+					onPress={!confirmed ? getCode : confirmCode}
 				/>
 			</View>
 		</SafeAreaView>
@@ -178,8 +197,8 @@ const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	logo: {
-		width: 200,
-		height: 200 / 1.24
+		width: 100,
+		height: 100 / 1.24
 	},
 	flexSpaced: {
 		justifyContent: "space-between",
@@ -190,7 +209,6 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		width: width - 130,
 		fontSize: 18,
-		fontWeight: "bold",
 		textAlign: "center"
 	},
 	appName: {
