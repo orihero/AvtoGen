@@ -5,7 +5,7 @@ import WheelPicker from "./WheelPicker";
 import AutoFilter from "./AutoFilter";
 import {
 	ScrollView,
-	TouchableWithoutFeedback,
+	TouchableWithoutFeedback
 } from "react-native-gesture-handler";
 import RoundCheckbox from "../../components/common/RoundCheckbox";
 import Animated from "react-native-reanimated";
@@ -20,7 +20,7 @@ const {
 	multiply,
 	greaterThan,
 	cond,
-	Extrapolate,
+	Extrapolate
 } = Animated;
 
 const { width } = Dimensions.get("window");
@@ -35,7 +35,7 @@ const CardContent = ({
 	services,
 	carTypes,
 	data,
-	setData,
+	setData
 }) => {
 	let onChange = (index, value) => {
 		if (value !== undefined) {
@@ -55,7 +55,7 @@ const CardContent = ({
 				scrollEventThrottle={16}
 				snapToInterval={width}
 				contentContainerStyle={{
-					width: width * checkboxes.length,
+					width: width * checkboxes.length
 				}}
 				onScroll={onScroll}
 				decelerationRate={0.99}
@@ -68,7 +68,7 @@ const CardContent = ({
 							showsVerticalScrollIndicator={false}
 							contentContainerStyle={{
 								paddingRight: 30,
-								width,
+								width
 							}}
 						>
 							{e.data && e.data.length > 0 ? (
@@ -93,7 +93,7 @@ const CardContent = ({
 												service={e.service}
 												isActive={
 													e.service
-														? data[i][index]
+														? data[i][item.id]
 														: data[i] === item.id
 												}
 												setActive={onChange}
@@ -103,7 +103,7 @@ const CardContent = ({
 								</>
 							) : (
 								<WheelPicker
-									setData={(time) =>
+									setData={time =>
 										setData({ ...data, 2: time })
 									}
 								/>

@@ -6,7 +6,7 @@ import {
 	StyleSheet,
 	Image,
 	Platform,
-	Switch,
+	Switch
 } from "react-native";
 import { colors, Icons } from "../../constants";
 import DefaultCheckbox from "../../components/common/DefaultCheckbox";
@@ -36,7 +36,7 @@ let AutoFilter = ({
 		<TouchableWithoutFeedback
 			key={index}
 			onPress={() =>
-				service ? setActive(index, !isActive) : setActive(rest.id)
+				service ? setActive(rest.id, !isActive) : setActive(rest.id)
 			}
 		>
 			<View style={[styles.autoFilterContainer]}>
@@ -53,7 +53,7 @@ let AutoFilter = ({
 					<Text
 						style={{
 							...styles.autoFilterText,
-							fontWeight: icon ? "bold" : "100",
+							fontWeight: icon ? "bold" : "100"
 						}}
 					>
 						{name}
@@ -66,7 +66,7 @@ let AutoFilter = ({
 							<Switch
 								value={isActive}
 								onValueChange={() =>
-									setActive(index, !isActive)
+									setActive(rest.id, !isActive)
 								}
 							/>
 						),
@@ -74,10 +74,10 @@ let AutoFilter = ({
 							<CheckBox
 								value={isActive}
 								onValueChange={() =>
-									setActive(index, !isActive)
+									setActive(rest.id, !isActive)
 								}
 							/>
-						),
+						)
 					})
 				) : (
 					<DefaultCheckbox
@@ -100,20 +100,20 @@ const styles = StyleSheet.create({
 		paddingVertical: 15,
 		borderBottomWidth: 0.5,
 		borderColor: colors.extraGray,
-		alignItems: "center",
+		alignItems: "center"
 	},
 	autoFilterText: {
 		color: colors.accent,
-		fontSize: 16,
+		fontSize: 16
 	},
 	fill: {
-		flex: 1,
+		flex: 1
 	},
 	icon: {
 		width: 36,
 		height: 20,
-		marginRight: 15,
-	},
+		marginRight: 15
+	}
 });
 
 export default AutoFilter;

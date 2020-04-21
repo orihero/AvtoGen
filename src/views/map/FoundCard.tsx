@@ -8,7 +8,7 @@ import {
 	Animated,
 	Dimensions,
 	TextInput,
-	Image,
+	Image
 } from "react-native";
 import { colors } from "../../constants/colors";
 import { Icons } from "../../constants/icons";
@@ -25,7 +25,7 @@ const FoundCard = ({
 	buttonsEnabled,
 	cancel,
 	arrived,
-	renderButtons,
+	renderButtons
 }) => {
 	let current = parent.company ? parent.company : parent;
 	let isExpanded = false;
@@ -38,9 +38,9 @@ const FoundCard = ({
 	let onGestureEvent = Animated.event([
 		{
 			nativeEvent: {
-				translationY: height,
-			},
-		},
+				translationY: height
+			}
+		}
 	]);
 	let onHandlerStateChange = ({ nativeEvent }) => {
 		if (nativeEvent.oldState === State.ACTIVE) {
@@ -112,20 +112,15 @@ const FoundCard = ({
 		}
 		if (!subscribed && current.services) {
 			let total = 0;
-			let services /*  data['1'].map(e=>{
-				return current.services.find()
-			}) */ = current.services.reduce(
-				(prev, service) => {
-					if (
-						data["1"][service.id] &&
-						data["0"] === service.car_type_id
-					) {
-						total += service.price;
-						return [...prev, service];
-					} else return prev;
-				},
-				[]
-			);
+			let services = current.services.reduce((prev, service) => {
+				if (
+					data["1"][service.id] &&
+					data["0"] === service.car_type_id
+				) {
+					total += service.price;
+					return [...prev, service];
+				} else return prev;
+			}, []);
 			return (
 				<Animated.ScrollView
 					showsVerticalScrollIndicator={false}
@@ -137,7 +132,7 @@ const FoundCard = ({
 								{strings.selectedServices} :
 							</Text>
 							<View>
-								{services.map((e) => {
+								{services.map(e => {
 									return (
 										<View>
 											<Text style={styles.lightText}>
@@ -145,7 +140,7 @@ const FoundCard = ({
 											</Text>
 											<Text
 												style={{
-													textAlign: "right",
+													textAlign: "right"
 												}}
 											>
 												{strings.price}: {e.price}{" "}
@@ -156,7 +151,7 @@ const FoundCard = ({
 								<Text
 									style={{
 										...styles.bold,
-										textAlign: "right",
+										textAlign: "right"
 									}}
 								>
 									{strings.total}: {total}
@@ -177,7 +172,7 @@ const FoundCard = ({
 										<Text
 											style={[
 												styles.timeText,
-												styles.bold,
+												styles.bold
 											]}
 										>
 											Суббота
@@ -185,7 +180,7 @@ const FoundCard = ({
 										<Text
 											style={[
 												styles.timeText,
-												styles.bold,
+												styles.bold
 											]}
 										>
 											10:00–22:00
@@ -198,9 +193,9 @@ const FoundCard = ({
 												{
 													rotate: expanded
 														? "180deg"
-														: "0deg",
-												},
-											],
+														: "0deg"
+												}
+											]
 										}}
 									/>
 								</View>
@@ -275,12 +270,12 @@ const FoundCard = ({
 	let contentHeight = Animated.subtract(0, height).interpolate({
 		inputRange: [0, 550],
 		outputRange: [0, 550],
-		extrapolate: "clamp",
+		extrapolate: "clamp"
 	});
 	let translateY = contentHeight.interpolate({
 		inputRange: [0, 80],
 		outputRange: [500, -20],
-		extrapolate: "clamp",
+		extrapolate: "clamp"
 	});
 	return (
 		<View>
@@ -293,17 +288,17 @@ const FoundCard = ({
 						<View>
 							<View
 								style={{
-									alignItems: "center",
+									alignItems: "center"
 								}}
 							>
-								<View style={styles.indicator}></View>
+								<View style={styles.indicator} />
 							</View>
 							{!subscribed && (
 								<TouchableWithoutFeedback
 									onPress={() => {
 										if (isExpanded) {
 											Animated.spring(height, {
-												toValue: 0,
+												toValue: 0
 											}).start(() => {
 												isExpanded = false;
 												height.setOffset(0);
@@ -311,7 +306,7 @@ const FoundCard = ({
 											});
 										} else {
 											Animated.spring(height, {
-												toValue: -300,
+												toValue: -300
 											}).start(() => {
 												isExpanded = true;
 												height.setOffset(-300);
@@ -355,35 +350,23 @@ const FoundCard = ({
 								backgroundColor={colors.white}
 								fill
 								full
+								text={strings.route}
+								onPress={() => setShowRoute(true)}
+							/>
+						</View>
+						<View style={{ flex: 1 }}>
+							<RoundButton
+								onPress={!buttonsEnabled ? cancel : subscribe}
+								fill
+								full
+								backgroundColor={colors.yellow}
 								text={
 									!buttonsEnabled
 										? strings.cancel
-										: strings.route
-								}
-								onPress={
-									!buttonsEnabled
-										? cancel
-										: () => setShowRoute(true)
+										: strings.subscribe
 								}
 							/>
 						</View>
-						{buttonsEnabled && (
-							<View style={{ flex: 1 }}>
-								<RoundButton
-									onPress={
-										!buttonsEnabled ? arrived : subscribe
-									}
-									fill
-									full
-									backgroundColor={colors.yellow}
-									text={
-										!buttonsEnabled
-											? strings.arrived
-											: strings.subscribe
-									}
-								/>
-							</View>
-						)}
 					</Animated.View>
 				)}
 			</Animated.View>
@@ -395,7 +378,7 @@ const styles = StyleSheet.create({
 	featureIcon: {
 		width: 20,
 		height: 20,
-		marginHorizontal: 10,
+		marginHorizontal: 10
 	},
 	row: { flexDirection: "row" },
 	container: {
@@ -407,7 +390,7 @@ const styles = StyleSheet.create({
 		padding: 15,
 		paddingHorizontal: 30,
 		borderRadius: 30,
-		maxHeight: 550,
+		maxHeight: 550
 	},
 	indicator: {
 		width: 40,
@@ -415,71 +398,71 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		backgroundColor: colors.extraGray,
 		margin: 10,
-		marginTop: 5,
+		marginTop: 5
 	},
 	top: {
 		flexDirection: "row",
-		paddingBottom: 10,
+		paddingBottom: 10
 	},
 	iconWrapper: {},
 	titleWrapper: {
 		flex: 1,
 		paddingHorizontal: 10,
-		justifyContent: "center",
+		justifyContent: "center"
 	},
 	title: {
 		fontSize: 17,
-		fontWeight: "bold",
+		fontWeight: "bold"
 	},
 	location: {
 		fontSize: 12,
-		color: colors.lightGray,
+		color: colors.lightGray
 	},
 	distanceWrapper: {},
 	distance: {
 		fontSize: 17,
-		fontWeight: "bold",
+		fontWeight: "bold"
 	},
 	content: {
 		paddingVertical: 15,
-		marginBottom: 50,
+		marginBottom: 50
 	},
 	borderTop: {
 		paddingVertical: 12,
 		borderTopWidth: 1,
-		borderColor: colors.ultraLightGray,
+		borderColor: colors.ultraLightGray
 	},
 	timeHeader: {
 		flexDirection: "row",
 		justifyContent: "space-between",
-		alignItems: "center",
+		alignItems: "center"
 	},
 	mainText: {
-		fontSize: 16,
+		fontSize: 16
 	},
 	twoBorder: {
 		paddingVertical: 7,
 		width: 250,
 		flexDirection: "row",
-		justifyContent: "space-between",
+		justifyContent: "space-between"
 	},
 	timeText: {},
 	bold: {
-		fontWeight: "bold",
+		fontWeight: "bold"
 	},
 	bottom: {
 		flexDirection: "row",
 		paddingBottom: 10,
-		paddingHorizontal: 5,
+		paddingHorizontal: 5
 	},
 	contentContainer: {
 		justifyContent: "center",
-		alignItems: "center",
+		alignItems: "center"
 	},
 	nameText: {
 		color: colors.accent,
 		fontWeight: "bold",
-		fontSize: 22,
+		fontSize: 22
 	},
 	reviewIconWrapper: {
 		backgroundColor: colors.lightBlue,
@@ -488,15 +471,15 @@ const styles = StyleSheet.create({
 		height: 64,
 		justifyContent: "center",
 		alignItems: "center",
-		margin: 30,
+		margin: 30
 	},
 	lightText: {
-		color: colors.lightGray,
+		color: colors.lightGray
 	},
 	thanksText: {
 		fontSize: 18,
 		color: colors.accent,
-		marginVertical: 40,
+		marginVertical: 40
 	},
 	commentWrapper: {
 		borderRadius: 20,
@@ -504,8 +487,8 @@ const styles = StyleSheet.create({
 		borderColor: colors.extraGray,
 		borderWidth: 1,
 		padding: 20,
-		marginVertical: 30,
-	},
+		marginVertical: 30
+	}
 });
 
 export default FoundCard;

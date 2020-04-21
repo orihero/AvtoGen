@@ -8,7 +8,7 @@ import {
 	Platform,
 	StatusBar,
 	StyleSheet,
-	View,
+	View
 } from "react-native";
 import firebase from "react-native-firebase";
 import MapView, { Marker } from "react-native-maps";
@@ -38,6 +38,8 @@ interface Region {
 
 let API_KEY = "AIzaSyCoMtd7r21tetH1XMUTP9iee4R6qSGbn4k";
 
+let iconSize = Platform.select({ android: 20, ios: 30 });
+
 const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	const [cardVisible, setCardVisible] = useState(false);
 	let subscribed = currentOrder && currentOrder.status === "new";
@@ -51,12 +53,12 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	const map = useRef(null);
 	const [animation, setAnimation] = useState(new Animated.Value(0));
 	useEffect(() => {
-		requests.main.companies().then((res) => {
+		requests.main.companies().then(res => {
 			setMarkers(res.data.data);
 			if (currentOrder) {
 				animation.stopAnimation();
 				let index = res.data.data.findIndex(
-					(e) => e.id === currentOrder.company.id
+					e => e.id === currentOrder.company.id
 				);
 				setactiveMarker(index);
 				animate();
@@ -77,7 +79,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 		}
 	}, [currentOrder]);
 
-	let createLocalNotification = (minutes) => {
+	let createLocalNotification = minutes => {
 		let notification = new firebase.notifications.Notification()
 			.setNotificationId(minutes)
 			.setTitle(strings.appName)
@@ -87,14 +89,14 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 		const date = new Date();
 		date.setMinutes(date.getMinutes() + minutes);
 		firebase.notifications().scheduleNotification(notification, {
-			fireDate: date.getTime(),
+			fireDate: date.getTime()
 		});
 	};
 
 	useEffect(() => {
 		if (subscribed) {
 			let index = markers.findIndex(
-				(e) => e.id === currentOrder.company.id
+				e => e.id === currentOrder.company.id
 			);
 			currentOrder;
 			setactiveMarker(index);
@@ -118,7 +120,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			({ coords: { longitude, latitude } }) => {
 				setUserLocation({ longitude, latitude });
 			},
-			(err) => console.warn("REJECTED: ", err)
+			err => console.warn("REJECTED: ", err)
 		);
 	};
 
@@ -127,8 +129,8 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			return;
 		}
 		PermissionsAndroid.request("android.permission.ACCESS_FINE_LOCATION")
-			.then((res) => {})
-			.catch((res) => {
+			.then(res => {})
+			.catch(res => {
 				console.warn("REJECTED: ", res);
 			});
 	};
@@ -149,7 +151,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 		setShowRoute(false);
 		try {
 			let response = await requests.main.cancel(currentOrder.id);
-			requests.main.companies().then((res) => {
+			requests.main.companies().then(res => {
 				setMarkers(res.data.data);
 			});
 			setMessage(null);
@@ -169,12 +171,12 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			services: data["1"],
 			car_type_id: data["0"],
 			company_id: current.id,
-			time: data["2"],
+			time: data["2"]
 		};
 		console.warn(postData.time);
 		requests.main
 			.book(postData)
-			.then((res) => {
+			.then(res => {
 				orderLoaded({ name: "current", data: res.data.data });
 			})
 			.catch(({ response }) => console.warn(response))
@@ -204,7 +206,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 						bottom: 10,
 						alignItems: "center",
 						right: 0,
-						left: 0,
+						left: 0
 					}}
 				>
 					<RoundButton
@@ -246,7 +248,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	let renderRoute = () => {
 		let focus = markers[activeMarker] || {
 			longitude: parseFloat(currentOrder.company.location_lng),
-			latitude: parseFloat(currentOrder.company.location_lat),
+			latitude: parseFloat(currentOrder.company.location_lat)
 		};
 		let destination = {};
 		destination.longitude = parseFloat(focus.location_lng);
@@ -258,19 +260,19 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 				apikey={API_KEY}
 				origin={userLocation}
 				destination={destination}
-				onError={(e) => console.warn(e)}
+				onError={e => console.warn(e)}
 				mode={"DRIVING"}
 			/>
 		);
 	};
 
-	let getCoord = (e) => {
+	let getCoord = e => {
 		return {
 			latitude: parseFloat(e.location_lat) || 1,
-			longitude: parseFloat(e.location_lng) || 1,
+			longitude: parseFloat(e.location_lng) || 1
 		};
 	};
-	let onSubmit = (data) => {
+	let onSubmit = data => {
 		//! Validation
 		if (!data["0"]) {
 			warnUser(strings.selectAuto);
@@ -290,12 +292,12 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			create: {
 				type: LayoutAnimation.Types.easeInEaseOut,
 				delay: 100,
-				property: LayoutAnimation.Properties.scaleXY,
-			},
+				property: LayoutAnimation.Properties.scaleXY
+			}
 		});
 		requests.main
 			.searchCompanies({ car_type_id: data["0"], services: data["1"] })
-			.then((res) => {
+			.then(res => {
 				if (!res.data.data || res.data.data.length <= 0) {
 					return;
 				}
@@ -309,7 +311,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 					map.current.animateToRegion({
 						...userLocation,
 						latitudeDelta: 0.1,
-						longitudeDelta: 0.1,
+						longitudeDelta: 0.1
 					});
 				}
 				setCardVisible(false);
@@ -319,13 +321,73 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 
 	let width = animation.interpolate({
 		inputRange: [0, 1],
-		outputRange: [0, 80],
+		outputRange: [0, 80]
 	});
 	let opacity = animation.interpolate({
 		inputRange: [0, 0.5, 1],
 		outputRange: [1, 1, 0],
-		extrapolate: "clamp",
+		extrapolate: "clamp"
 	});
+
+	let renderDefaultMarker = (e, i) => {
+		if (Platform.OS === "ios")
+			return (
+				<Marker
+					onPress={() => {
+						map.current.animateToRegion({
+							...{
+								latitude: parseFloat(e.location_lat) || 1,
+								longitude: parseFloat(e.location_lng) || 1
+							},
+							latitudeDelta: 0.1,
+							longitudeDelta: 0.1
+						});
+						setactiveMarker(i);
+						setCardVisible(false);
+					}}
+					title={e.title}
+					coordinate={{
+						latitude: parseFloat(e.location_lat) || 1,
+						longitude: parseFloat(e.location_lng) || 1
+					}}
+				>
+					<Image
+						source={
+							activeMarker === i ? selectedMarker : markerIcon
+						}
+						style={{
+							width: iconSize,
+							height:
+								activeMarker === i
+									? iconSize / 0.83
+									: iconSize / 0.75
+						}}
+					/>
+				</Marker>
+			);
+		return (
+			<Marker
+				onPress={() => {
+					map.current.animateToRegion({
+						...{
+							latitude: parseFloat(e.location_lat) || 1,
+							longitude: parseFloat(e.location_lng) || 1
+						},
+						latitudeDelta: 0.1,
+						longitudeDelta: 0.1
+					});
+					setactiveMarker(i);
+					setCardVisible(false);
+				}}
+				title={e.title}
+				image={activeMarker === i ? selectedMarker : markerIcon}
+				coordinate={{
+					latitude: parseFloat(e.location_lat) || 1,
+					longitude: parseFloat(e.location_lng) || 1
+				}}
+			/>
+		);
+	};
 
 	return (
 		<View style={styles.container}>
@@ -338,9 +400,9 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 					latitude: 41.2825125,
 					longitude: 69.1392828,
 					latitudeDelta: 0.8,
-					longitudeDelta: 0.5,
+					longitudeDelta: 0.5
 				}}
-				ref={(ref) => (map.current = ref)}
+				ref={ref => (map.current = ref)}
 				onMapReady={onMapReady}
 			>
 				{userLocation && showRoute ? renderRoute() : null}
@@ -350,47 +412,14 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 							return null;
 						}
 						if (!subscribed) {
-							return (
-								<Marker
-									onPress={() => {
-										map.current.animateToRegion({
-											...{
-												latitude:
-													parseFloat(
-														e.location_lat
-													) || 1,
-												longitude:
-													parseFloat(
-														e.location_lng
-													) || 1,
-											},
-											latitudeDelta: 0.1,
-											longitudeDelta: 0.1,
-										});
-										setactiveMarker(i);
-										setCardVisible(false);
-									}}
-									title={e.title}
-									image={
-										activeMarker === i
-											? selectedMarker
-											: markerIcon
-									}
-									coordinate={{
-										latitude:
-											parseFloat(e.location_lat) || 1,
-										longitude:
-											parseFloat(e.location_lng) || 1,
-									}}
-								/>
-							);
+							return renderDefaultMarker(e, i);
 						}
 						return (
 							<Marker
 								key={i}
 								coordinate={{
 									latitude: parseFloat(e.location_lat) || 1,
-									longitude: parseFloat(e.location_lng) || 1,
+									longitude: parseFloat(e.location_lng) || 1
 								}}
 								title={e.title}
 								style={{
@@ -398,7 +427,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 									justifyContent: "center",
 									width: 80,
 									height: 80,
-									alignItems: "center",
+									alignItems: "center"
 								}}
 								onPress={() => {
 									map.current.animateToRegion({
@@ -406,10 +435,10 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 											latitude:
 												parseFloat(e.location_lat) || 1,
 											longitude:
-												parseFloat(e.location_lng) || 1,
+												parseFloat(e.location_lng) || 1
 										},
 										latitudeDelta: 0.1,
-										longitudeDelta: 0.1,
+										longitudeDelta: 0.1
 									});
 									setactiveMarker(i);
 									setCardVisible(false);
@@ -424,8 +453,8 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 												height: width,
 												opacity,
 												position: "absolute",
-												alignSelf: "center",
-											},
+												alignSelf: "center"
+											}
 										]}
 									/>
 								)}
@@ -436,11 +465,11 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 											: markerIcon
 									}
 									style={{
-										width: 20,
+										width: iconSize,
 										height:
 											activeMarker === i
-												? 20 / 0.83
-												: 20 / 0.75,
+												? iconSize / 0.83
+												: iconSize / 0.75
 									}}
 								/>
 							</Marker>
@@ -482,21 +511,24 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		flex: 1
 	},
 	animationBase: {
 		borderRadius: 100,
 		borderColor: colors.accent,
-		borderWidth: 2,
-	},
+		borderWidth: 2
+	}
 });
 
 const mapStateToProps = ({ order: { current: currentOrder } }) => ({
-	currentOrder,
+	currentOrder
 });
 
 const mapDispatchToProps = {
-	orderLoaded,
+	orderLoaded
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CustomMap);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(CustomMap);
