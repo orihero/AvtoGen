@@ -1,27 +1,23 @@
 import React, { useEffect, useState } from "react";
-import {
-	Dimensions,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TouchableWithoutFeedback,
-	View
-} from "react-native";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import SafeAreaView from "react-native-safe-area-view";
-import Icons from "react-native-vector-icons/Feather";
-import FancyInput from "../../components/common/FancyInput";
-import RoundButton from "../../components/common/RoundButton";
+import { connect } from "react-redux";
+import requests from "../../api/requests";
+import logo from "../../assets/images/dark-logo.png";
+import Text from "../../components/common/CustomText";
 import { colors } from "../../constants";
 import { strings } from "../../locales/strings";
-import requests from "../../api/requests";
 import { userLoggedIn } from "../../redux/actions";
-import { connect } from "react-redux";
+import RoundButton from "../../components/common/RoundButton";
 
 let buttons = [
 	Array.from({ length: 3 }, (v, k) => k + 1),
 	Array.from({ length: 3 }, (v, k) => k + 1),
 	Array.from({ length: 3 }, (v, k) => k + 1)
 ];
+
+let { width } = Dimensions.get("window");
 
 const Login = ({ navigation, userLoggedIn }) => {
 	const [value, setvalue] = useState("");
@@ -33,13 +29,17 @@ const Login = ({ navigation, userLoggedIn }) => {
 	const [loading, setLoading] = useState(false);
 	let count = 0;
 
+	let onPhoneFocus = () => {
+		setvalue("+998");
+	};
+
 	let getCode = () => {
 		if (value.length < 9) {
 			setError(strings.fillAllFields);
 			return;
 		}
 		requests.auth
-			.login({ phone: "998" + value })
+			.login({ phone: value })
 			.then(res => {
 				console.warn(res.data.data);
 				setData(res.data.data);
@@ -124,7 +124,140 @@ const Login = ({ navigation, userLoggedIn }) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={styles.infoWrapper}>
+			<View style={styles.centeredFlex}>
+				<Image source={logo} style={styles.logo} />
+			</View>
+			<View style={[styles.centeredFlex, { width }]}>
+				<TextInput
+					style={styles.phoneInput}
+					placeholder={strings.enterPhoneNumber}
+					maxLength={13}
+					onFocus={onPhoneFocus}
+					value={value}
+					keyboardType={"phone-pad"}
+					onChangeText={e => setvalue(e)}
+				/>
+			</View>
+			<View style={styles.flexSpaced}>
+				<Text style={styles.agreementText}>
+					{strings.acceptAgreement}
+				</Text>
+				<RoundButton
+					backgroundColor={colors.accent}
+					fill
+					text={strings.continue}
+					textColor={colors.white}
+					full
+					loading={loading}
+					big
+				/>
+			</View>
+		</SafeAreaView>
+	);
+};
+
+const mapStateToProps = ({}) => ({});
+
+const mapDispatchToProps = {
+	userLoggedIn
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Login);
+
+const styles = StyleSheet.create({
+	agreementText: {
+		padding: 30,
+		textAlign: "center"
+	},
+	centeredFlex: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center"
+	},
+	logo: {
+		width: 200,
+		height: 200 / 1.24
+	},
+	flexSpaced: {
+		justifyContent: "space-between",
+		flex: 1,
+		alignItems: "center"
+	},
+	phoneInput: {
+		borderBottomWidth: 1,
+		width: width - 130,
+		fontSize: 18,
+		fontWeight: "bold",
+		textAlign: "center"
+	},
+	appName: {
+		color: colors.white,
+		fontSize: 40
+	},
+	container: {
+		justifyContent: "center",
+		alignItems: "center",
+		flex: 1,
+		backgroundColor: colors.white
+	},
+	inputWrapper: {
+		borderWidth: 1,
+		borderColor: colors.white,
+		borderRadius: 250,
+		padding: 15,
+		margin: 15,
+		marginBottom: 0,
+		width: Dimensions.get("window").width - 60,
+		alignItems: "center",
+		flexDirection: "row",
+		justifyContent: "space-between",
+		paddingHorizontal: 10
+	},
+	buttonsContainer: {
+		// flex: 1,
+		// justifyContent: 'space-between',
+	},
+	squareButtonContainer: {
+		borderRadius: 8,
+		width: 72,
+		height: 72,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: colors.white,
+		margin: 8
+	},
+	infoWrapper: {
+		justifyContent: "center",
+		alignItems: "center",
+		paddingVertical: 5
+	},
+	row: {
+		flexDirection: "row",
+		marginHorizontal: 5,
+		justifyContent: "flex-end"
+	},
+	buttonText: {
+		fontSize: 22,
+		color: colors.accent,
+		fontWeight: "bold"
+	},
+	text: {
+		color: colors.white,
+		textAlign: "center",
+		margin: 5
+	},
+	dangerText: {
+		color: colors.red,
+		textAlign: "center",
+		margin: 5
+	}
+});
+
+/*
+<View style={styles.infoWrapper}>
 				<Text style={styles.appName}>AvtoGen</Text>
 				<Text style={styles.text}>
 					{confirmed ? strings.confirmCode : strings.enterPhoneNumber}
@@ -250,78 +383,4 @@ const Login = ({ navigation, userLoggedIn }) => {
 					}}
 				/>
 			</View>
-		</SafeAreaView>
-	);
-};
-
-const mapStateToProps = ({}) => ({});
-
-const mapDispatchToProps = {
-	userLoggedIn
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
-
-const styles = StyleSheet.create({
-	appName: {
-		color: colors.white,
-		fontSize: 40
-	},
-	container: {
-		justifyContent: "center",
-		alignItems: "center",
-		flex: 1,
-		backgroundColor: colors.accent
-	},
-	inputWrapper: {
-		borderWidth: 1,
-		borderColor: colors.white,
-		borderRadius: 250,
-		padding: 15,
-		margin: 15,
-		marginBottom: 0,
-		width: Dimensions.get("window").width - 60,
-		alignItems: "center",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		paddingHorizontal: 10
-	},
-	buttonsContainer: {
-		// flex: 1,
-		// justifyContent: 'space-between',
-	},
-	squareButtonContainer: {
-		borderRadius: 8,
-		width: 72,
-		height: 72,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: colors.white,
-		margin: 8
-	},
-	infoWrapper: {
-		justifyContent: "center",
-		alignItems: "center",
-		paddingVertical: 5
-	},
-	row: {
-		flexDirection: "row",
-		marginHorizontal: 5,
-		justifyContent: "flex-end"
-	},
-	buttonText: {
-		fontSize: 22,
-		color: colors.accent,
-		fontWeight: "bold"
-	},
-	text: {
-		color: colors.white,
-		textAlign: "center",
-		margin: 5
-	},
-	dangerText: {
-		color: colors.red,
-		textAlign: "center",
-		margin: 5
-	}
-});
+		 */

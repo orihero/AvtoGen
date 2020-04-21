@@ -41,8 +41,7 @@ export let strings = new LocalizedStrings({
 		russian: "Русский",
 		english: "English",
 		uzbek: "O`zbek",
-		enterPhoneNumber: `Введите номер телефона 
-для авторизации`,
+		enterPhoneNumber: `Введите номер телефона`,
 		language: "Языковая версия",
 		userInfo: "Персональные данные",
 		name: "Введите имя",
@@ -66,7 +65,9 @@ export let strings = new LocalizedStrings({
 		price: "Цена",
 		total: "Итого",
 		appName: "Avtogen",
-		youAreSubscribed: "Вы записаны через 1 минут на автомойку"
+		youAreSubscribed: "Вы записаны через 1 минут на автомойку",
+		acceptAgreement:
+			"Нажимая кнопку «Продолжить» я принимаю условия пользовательского соглашения"
 	},
 	en: {
 		firstSlider: "Ручная мойка кузова нано шампунем",
@@ -200,6 +201,8 @@ export let strings = new LocalizedStrings({
 		price: "Цена",
 		total: "Итого",
 		appName: "Avtogen",
-		youAreSubscribed: "Вы записаны через 1 минут на автомойку"
+		youAreSubscribed: "Вы записаны через 1 минут на автомойку",
+		acceptAgreement:
+			"Нажимая кнопку «Продолжить» я принимаю условия пользовательского соглашения"
 	}
 });
