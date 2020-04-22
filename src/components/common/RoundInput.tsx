@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
 		borderRadius: 300,
 		backgroundColor: colors.white,
 		marginHorizontal: 40,
-		marginVertical: 8
+		marginVertical: 8,
+		paddingTop: Platform.select({ android: 5, default: 0 })
 	}
 });
 

@@ -15,7 +15,6 @@ import MapView, { Marker } from "react-native-maps";
 import MapsWithDirection from "react-native-maps-directions";
 import { connect } from "react-redux";
 import requests from "../../api/requests";
-import markerIcon from "../../assets/images/marker.png";
 import selectedMarker from "../../assets/images/selectedMarker.png";
 import RoundButton from "../../components/common/RoundButton";
 import Header from "../../components/Header";
@@ -335,6 +334,21 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 		extrapolate: "clamp"
 	});
 
+	let allFieldsFilled = () => {
+		let process = 1;
+
+		if (data[0] === -1) {
+			process -= 0.33;
+		}
+		if (Object.keys(data[1]).length <= 0) {
+			process -= 0.33;
+		}
+		if (data[2] === "") {
+			process -= 0.34;
+		}
+		return process;
+	};
+
 	let renderDefaultMarker = (e, i) => {
 		if (Platform.OS === "ios")
 			return (
@@ -348,8 +362,9 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 							latitudeDelta: 0.1,
 							longitudeDelta: 0.1
 						});
-						setactiveMarker(i);
-						setCardVisible(false);
+						if (allFieldsFilled()) {
+							setactiveMarker(i);
+						}
 					}}
 					title={e.title}
 					coordinate={{
@@ -359,7 +374,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 				>
 					<Image
 						source={
-							activeMarker === i ? selectedMarker : markerIcon
+							activeMarker === i ? selectedMarker : selectedMarker
 						}
 						style={{
 							width: iconSize,
@@ -382,11 +397,12 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 						latitudeDelta: 0.1,
 						longitudeDelta: 0.1
 					});
-					setactiveMarker(i);
-					setCardVisible(false);
+					if (allFieldsFilled()) {
+						setactiveMarker(i);
+					}
 				}}
 				title={e.title}
-				image={activeMarker === i ? selectedMarker : markerIcon}
+				image={activeMarker === i ? selectedMarker : selectedMarker}
 				coordinate={{
 					latitude: parseFloat(e.location_lat) || 1,
 					longitude: parseFloat(e.location_lng) || 1
@@ -468,7 +484,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 									source={
 										activeMarker === i
 											? selectedMarker
-											: markerIcon
+											: selectedMarker
 									}
 									style={{
 										width: iconSize,
@@ -486,7 +502,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			<Header
 				text={
 					cardVisible
-						? strings.main
+						? strings.searchCarWash
 						: currentOrder && !subscribed
 						? strings.orderAccepted
 						: `${strings.found} ${markers.length} ${strings.nearby}`

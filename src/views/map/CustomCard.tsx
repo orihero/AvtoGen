@@ -4,14 +4,14 @@ import {
 	Dimensions,
 	LayoutAnimation,
 	StyleSheet,
-	View,
+	View
 } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import requests from "../../api/requests";
 import AnimatedButton from "../../components/common/AnimatedButton";
 import Text from "../../components/common/CustomText";
 import RoundCheckbox, {
-	RoundCheckboxProps,
+	RoundCheckboxProps
 } from "../../components/common/RoundCheckbox";
 import { colors } from "../../constants/index";
 import { strings } from "../../locales/strings";
@@ -36,10 +36,10 @@ checkboxes = [
 			{ icon: "light", name: "Легковая" },
 			{ icon: "jeep", name: "Джип" },
 			{ icon: "miniven", name: "Минивен" },
-			{ icon: "heavy", name: "Грузовая" },
+			{ icon: "heavy", name: "Грузовая" }
 		],
 		title: strings.selectAuto,
-		carType: true,
+		carType: true
 	},
 	{
 		backgroundColor: colors.ultraLightGray,
@@ -50,28 +50,28 @@ checkboxes = [
 		size: 24,
 		data: [
 			{
-				name: "Бесконтактная мойка кузова автомобиля, коврики пороги",
+				name: "Бесконтактная мойка кузова автомобиля, коврики пороги"
 			},
 			{
 				name:
-					"Чистка салона пылесосом и влажная уборка пластмассовых деталей",
+					"Чистка салона пылесосом и влажная уборка пластмассовых деталей"
 			},
 			{
-				name: "Чистка стекол изнутри химическими средствами",
+				name: "Чистка стекол изнутри химическими средствами"
 			},
 			{
 				name:
-					"Полировка пластмассовых деталей салона химическими средствами",
+					"Полировка пластмассовых деталей салона химическими средствами"
 			},
 			{
-				name: "Мойка двигателя и моторного отсека, продувка",
+				name: "Мойка двигателя и моторного отсека, продувка"
 			},
 			{
-				name: "Мойка двигателя и моторного отсека, продувка",
-			},
+				name: "Мойка двигателя и моторного отсека, продувка"
+			}
 		],
 		title: strings.selectService,
-		service: true,
+		service: true
 	},
 	{
 		backgroundColor: colors.ultraLightGray,
@@ -81,8 +81,8 @@ checkboxes = [
 		activeColor: colors.white,
 		size: 28,
 		data: 1,
-		title: strings.selectTime,
-	},
+		title: strings.selectTime
+	}
 ];
 
 interface CustomCardProps {
@@ -102,18 +102,39 @@ const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 	const [services, setServices] = useState([]);
 	const [carTypes, setCarTypes] = useState([]);
 
+	const [progress, setProgress] = useState(new Animated.Value(0));
+	const [allFieldsFilled, setAllFieldsFilled] = useState(false);
+
+	useEffect(() => {
+		let process = 1;
+
+		if (data[0] === -1) {
+			process -= 0.33;
+		}
+		if (Object.keys(data[1]).length <= 0) {
+			process -= 0.33;
+		}
+		if (data[2] === "") {
+			process -= 0.34;
+		}
+		Animated.spring(progress, { toValue: process }).start();
+		if (process === 1) {
+			setAllFieldsFilled(true);
+		}
+	}, [data]);
+
 	let animation = new Animated.Value(0);
 	let scroll;
 	useEffect(() => {
-		requests.main.services().then((res) => {
+		requests.main.services().then(res => {
 			setServices(res.data.data);
 		});
 		requests.main
 			.carTypes()
-			.then((res) => {
+			.then(res => {
 				setCarTypes(res.data.data);
 			})
-			.catch((res) => {
+			.catch(res => {
 				console.warn(res.response);
 			});
 	}, []);
@@ -121,17 +142,17 @@ const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 		setTimeout(() => {
 			if (scroll && scroll._component) {
 				scroll._component.scrollTo({
-					x: active * Dimensions.get("window").width,
+					x: active * Dimensions.get("window").width
 				});
 			}
 		}, 200);
 	}, [active]);
-	const selectFilter = (index) => {
+	const selectFilter = index => {
 		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 		setActive(active === index ? -1 : index);
 	};
 	//When option is selected
-	let proceed = (val) => {
+	let proceed = val => {
 		if (active + 1 === checkboxes.length) {
 			//start loading
 			return;
@@ -145,31 +166,31 @@ const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 		{
 			nativeEvent: {
 				contentOffset: {
-					x: animation,
-				},
-			},
-		},
+					x: animation
+				}
+			}
+		}
 	]);
 	let wHeight = 300;
 	let height = new Animated.Value(-wHeight);
 	let onGestureEvent = Animated.event([
 		{
 			nativeEvent: {
-				translationY: height,
-			},
-		},
+				translationY: height
+			}
+		}
 	]);
 	let onHandlerStateChange = ({ nativeEvent }) => {
 		if (nativeEvent.oldState === State.ACTIVE) {
 			if (nativeEvent.translationY < 0) {
 				Animated.spring(height, { toValue: -wHeight }).start(() => {
-					isExpanded = true;
+					// isExpanded = true;
 					height.setOffset(-wHeight);
 					height.setValue(0);
 				});
 			} else {
 				Animated.spring(height, { toValue: wHeight }).start(() => {
-					isExpanded = false;
+					// isExpanded = false;
 					height.setOffset(0);
 					height.setValue(0);
 				});
@@ -179,7 +200,7 @@ const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 	let contentHeight = Animated.subtract(0, height).interpolate({
 		inputRange: [0, wHeight],
 		outputRange: [0, wHeight],
-		extrapolate: "clamp",
+		extrapolate: "clamp"
 	});
 
 	let shouldRender = active !== -1 && checkboxes[active];
@@ -206,11 +227,11 @@ const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 								proceed,
 								childStates,
 								onScroll,
-								scrollRef: (r) => (scroll = r),
+								scrollRef: r => (scroll = r),
 								services,
 								carTypes,
 								data,
-								setData,
+								setData
 							}}
 						/>
 					</Animated.View>
@@ -232,13 +253,19 @@ const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 					})}
 				</View>
 				<AnimatedButton
-					onPress={() => onSubmit(data)}
-					backgroundColor={colors.yellow}
-					borderColor={colors.yellow}
-					text={strings.findCarWash}
+					onPress={
+						allFieldsFilled
+							? () => onSubmit(data)
+							: () => proceed(active + 1)
+					}
+					backgroundColor={colors.extraGray}
+					borderColor={colors.extraGray}
+					text={!allFieldsFilled ? strings.next : strings.findCarWash}
 					fill
 					full
 					loading={loading}
+					progress={progress}
+					progressColor={colors.yellow}
 				/>
 			</View>
 		</Animated.View>
@@ -251,14 +278,14 @@ const styles = StyleSheet.create({
 		width: 70,
 		height: 70,
 		borderRadius: 40,
-		marginVertical: 15,
+		marginVertical: 15
 	},
 	initialWrapper: {
 		paddingHorizontal: 30,
-		paddingBottom: 10,
+		paddingBottom: 10
 	},
 	fill: {
-		flex: 1,
+		flex: 1
 	},
 	card: {
 		overflow: "hidden",
@@ -270,30 +297,30 @@ const styles = StyleSheet.create({
 		right: 0,
 		left: 0,
 		borderRadius: 40,
-		maxHeight: 550,
+		maxHeight: 550
 	},
 	servicesContainer: {
 		flexDirection: "row",
 		justifyContent: "space-between",
-		paddingVertical: 15,
+		paddingVertical: 15
 	},
 	filterWrapper: {
 		borderColor: colors.lightGray,
 		maxHeight: 250,
-		paddingHorizontal: 10,
+		paddingHorizontal: 10
 	},
 	dataWrapper: {},
 	cardHeader: {
 		backgroundColor: colors.ultraLightGray,
 		alignItems: "center",
 		padding: 10,
-		flex: 1,
+		flex: 1
 	},
 	cardHeaderText: {
 		fontSize: 18,
 		fontWeight: "bold",
 		color: colors.accent,
-		textAlign: "center",
+		textAlign: "center"
 	},
 	indicator: {
 		width: 40,
@@ -301,8 +328,8 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		backgroundColor: colors.extraGray,
 		margin: 10,
-		marginTop: 5,
-	},
+		marginTop: 5
+	}
 });
 
 export default CustomCard;

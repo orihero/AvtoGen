@@ -149,15 +149,28 @@ const Login = ({ navigation, userLoggedIn }) => {
 				/>
 			</View>
 			<View style={styles.flexSpaced}>
-				<View>
+				<View
+					style={{
+						flexDirection: "row",
+						padding: 30,
+						flexShrink: 1,
+						flexWrap: "wrap"
+					}}
+				>
 					<Text style={styles.agreementText}>
-						{strings.acceptAgreement}
-					</Text>
-					<Text
-						style={{ color: colors.lightBlue, textAlign: "center" }}
-						onPress={() => Linking.openURL("https://avtogen.uz")}
-					>
-						{strings.pravicyAgreemnt}
+						{strings.acceptAgreement}{" "}
+						<Text
+							style={{
+								color: colors.black,
+								textAlign: "center",
+								fontWeight: "bold"
+							}}
+							onPress={() =>
+								Linking.openURL("https://avtogen.uz")
+							}
+						>
+							{strings.pravicyAgreemnt}
+						</Text>
 					</Text>
 				</View>
 				<RoundButton
@@ -188,7 +201,6 @@ export default connect(
 
 const styles = StyleSheet.create({
 	agreementText: {
-		padding: 30,
 		textAlign: "center"
 	},
 	centeredFlex: {
@@ -197,8 +209,8 @@ const styles = StyleSheet.create({
 		alignItems: "center"
 	},
 	logo: {
-		width: 100,
-		height: 100 / 1.24
+		width: 150,
+		height: 150 / 1.24
 	},
 	flexSpaced: {
 		justifyContent: "space-between",

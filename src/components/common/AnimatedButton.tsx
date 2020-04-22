@@ -6,7 +6,7 @@ import {
 	Animated,
 	TouchableWithoutFeedback,
 	LayoutAnimation,
-	ActivityIndicator,
+	ActivityIndicator
 } from "react-native";
 import { measures, colors } from "../../constants";
 
@@ -21,6 +21,8 @@ export interface AnimatedButtonProps {
 	onPress?: Function;
 	maxSize?: number;
 	minSize?: number;
+	progress?: Animated.Value;
+	progressColor?: string;
 }
 
 const AnimatedButton = ({
@@ -34,6 +36,8 @@ const AnimatedButton = ({
 	maxSize = 200,
 	minSize = 60,
 	bold,
+	progress,
+	progressColor
 }: AnimatedButtonProps) => {
 	const [width, setWidth] = useState(maxSize);
 	const [animation, setAnimation] = useState(new Animated.Value(width));
@@ -50,7 +54,7 @@ const AnimatedButton = ({
 		setWidth(maxSize);
 		Animated.timing(animation, {
 			duration: 100,
-			toValue: maxSize,
+			toValue: maxSize
 		}).start();
 	};
 
@@ -66,7 +70,7 @@ const AnimatedButton = ({
 		setWidth(minSize);
 		Animated.timing(animation, {
 			duration: 100,
-			toValue: minSize,
+			toValue: minSize
 		}).start();
 	};
 	let localPress = () => {
@@ -75,12 +79,13 @@ const AnimatedButton = ({
 	let opacity = animation.interpolate({
 		inputRange: [minSize, maxSize],
 		outputRange: [0, 1],
-		extrapolate: "clamp",
+		extrapolate: "clamp"
 	});
 	let height = animation.interpolate({
 		inputRange: [minSize, maxSize],
-		outputRange: [minSize, 55],
+		outputRange: [minSize, 55]
 	});
+	let progressWidth = Animated.multiply(progress, width);
 	return (
 		<TouchableWithoutFeedback onPress={localPress}>
 			<View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -95,11 +100,27 @@ const AnimatedButton = ({
 							borderColor,
 							width: animation,
 							height,
-						},
+							overflow: "hidden"
+						}
 					]}
 				>
+					{progress && (
+						<Animated.View
+							style={{
+								position: "absolute",
+								backgroundColor: progressColor,
+								width: progressWidth,
+								top: 0,
+								bottom: 0,
+								left: 0
+							}}
+						/>
+					)}
 					<Animated.Text
-						style={{ opacity, fontWeight: bold ? "bold" : "400" }}
+						style={{
+							opacity,
+							fontWeight: bold ? "bold" : "400"
+						}}
 					>
 						{text}
 					</Animated.Text>
@@ -124,26 +145,26 @@ const styles = StyleSheet.create({
 		borderRadius: measures.borderRadius * 3,
 		borderWidth: 1,
 		borderColor: colors.white,
-		margin: 5,
+		margin: 5
 	},
 	full: {
 		justifyContent: "center",
 		alignItems: "center",
 		flexDirection: "row",
-		height: 55,
+		height: 55
 	},
 	fill: {
 		borderColor: colors.white,
-		backgroundColor: colors.white,
+		backgroundColor: colors.white
 	},
 	textBase: {
 		color: colors.white,
 		fontWeight: "bold",
-		fontSize: 14,
+		fontSize: 14
 	},
 	textFill: {
-		color: colors.accent,
-	},
+		color: colors.accent
+	}
 });
 
 export default AnimatedButton;
