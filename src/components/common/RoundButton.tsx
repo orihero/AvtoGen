@@ -19,6 +19,7 @@ export interface RoundButtonProps {
 	big?: boolean;
 	onPress?: Function;
 	loading?: boolean;
+	disabled?: boolean;
 }
 
 const RoundButton = ({
@@ -31,10 +32,11 @@ const RoundButton = ({
 	textColor,
 	big,
 	flex,
-	loading = false
+	loading = false,
+	disabled = false
 }: RoundButtonProps) => {
 	return (
-		<TouchableWithoutFeedback onPress={onPress}>
+		<TouchableWithoutFeedback onPress={disabled ? null : onPress}>
 			<View
 				style={[
 					styles.base,

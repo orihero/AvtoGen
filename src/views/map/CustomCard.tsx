@@ -17,6 +17,7 @@ import { colors } from "../../constants/index";
 import { strings } from "../../locales/strings";
 import { FilterItem } from "./AutoFilter";
 import CardContent from "./CardContent";
+import { warnUser } from "src/utils/warn";
 
 interface FilterData {
 	data: Array<FilterItem> | number;
@@ -153,12 +154,31 @@ const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 	};
 	//When option is selected
 	let proceed = val => {
-		if (active + 1 === checkboxes.length) {
+		let newActive = active + 1;
+		if (data[0] === -1) {
+			newActive = 0;
+			scrollTo(newActive, val);
+			return;
+		}
+		if (Object.keys(data[1]).length <= 0) {
+			newActive = 1;
+			scrollTo(newActive, val);
+			return;
+		}
+		if (data[2] === "") {
+			newActive = 2;
+			scrollTo(newActive, val);
+			return;
+		}
+		if (newActive === checkboxes.length) {
 			//start loading
 			return;
 		}
+		scrollTo(newActive, val);
+	};
+	let scrollTo = (newActive, val) => {
 		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-		setActive(active + 1);
+		setActive(newActive);
 		setChildStates(changeValueAt(childStates, val, active));
 	};
 	//Pangesture handler scroll event
@@ -266,6 +286,7 @@ const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
 					loading={loading}
 					progress={progress}
 					progressColor={colors.yellow}
+					borderRadius={45}
 				/>
 			</View>
 		</Animated.View>

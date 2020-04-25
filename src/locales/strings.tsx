@@ -2,6 +2,7 @@ import LocalizedStrings from "react-native-localization";
 
 export let strings = new LocalizedStrings({
 	ru: {
+		canClaimCodeIn: "Введите код ",
 		firstSlider: "Ручная мойка кузова нано шампунем",
 		secondSlider:
 			"Чистка салона пылесосом и влажная уборка пластмассовых деталей",

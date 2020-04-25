@@ -346,12 +346,13 @@ const FoundCard = ({
 					>
 						<View style={{ flex: 1 }}>
 							<RoundButton
-								borderColor={colors.black}
+								borderColor={colors.lightGray}
 								backgroundColor={colors.white}
 								fill
 								full
 								text={strings.route}
 								onPress={() => setShowRoute(true)}
+								textColor={colors.lightGray}
 							/>
 						</View>
 						<View style={{ flex: 1 }}>

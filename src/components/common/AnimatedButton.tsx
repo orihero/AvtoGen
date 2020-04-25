@@ -23,6 +23,7 @@ export interface AnimatedButtonProps {
 	minSize?: number;
 	progress?: Animated.Value;
 	progressColor?: string;
+	borderRadius?: number;
 }
 
 const AnimatedButton = ({
@@ -37,7 +38,8 @@ const AnimatedButton = ({
 	minSize = 60,
 	bold,
 	progress,
-	progressColor
+	progressColor,
+	borderRadius = measures.borderRadius * 3
 }: AnimatedButtonProps) => {
 	const [width, setWidth] = useState(maxSize);
 	const [animation, setAnimation] = useState(new Animated.Value(width));
@@ -100,7 +102,8 @@ const AnimatedButton = ({
 							borderColor,
 							width: animation,
 							height,
-							overflow: "hidden"
+							overflow: "hidden",
+							borderRadius
 						}
 					]}
 				>

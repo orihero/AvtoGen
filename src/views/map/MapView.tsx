@@ -335,7 +335,6 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	});
 
 	let allFieldsFilled = () => {
-		console.warn({ process });
 		if (data[0] === -1) {
 			return false;
 		}

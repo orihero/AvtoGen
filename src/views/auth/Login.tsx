@@ -122,6 +122,8 @@ const Login = ({ navigation, userLoggedIn }) => {
 		}
 	});
 
+	let validInputs = value.length >= 13 || confirmed;
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.centeredFlex}>
@@ -144,9 +146,19 @@ const Login = ({ navigation, userLoggedIn }) => {
 							setCode(e);
 							return;
 						}
+						if (value === "+998" && e.length < value.length) {
+							return;
+						}
 						setvalue(e);
 					}}
 				/>
+				{confirmed ? (
+					<Text style={styles.text}>
+						{strings.canClaimCodeIn}
+						{` ${counter}`}
+					</Text>
+				) : null}
+				{error ? <Text style={styles.dangerText}>{error}</Text> : null}
 			</View>
 			<View style={styles.flexSpaced}>
 				<View
@@ -174,14 +186,17 @@ const Login = ({ navigation, userLoggedIn }) => {
 					</Text>
 				</View>
 				<RoundButton
-					backgroundColor={colors.accent}
+					backgroundColor={
+						validInputs ? colors.accent : colors.extraGray
+					}
 					fill
 					text={strings.continue}
-					textColor={colors.white}
+					textColor={validInputs ? colors.white : colors.accent}
 					full
 					loading={loading}
 					big
 					onPress={!confirmed ? getCode : confirmCode}
+					disabled={!validInputs}
 				/>
 			</View>
 		</SafeAreaView>
@@ -275,9 +290,11 @@ const styles = StyleSheet.create({
 		fontWeight: "bold"
 	},
 	text: {
-		color: colors.white,
+		color: colors.accent,
 		textAlign: "center",
-		margin: 5
+		margin: 5,
+		marginHorizontal: -30,
+		fontWeight: "100"
 	},
 	dangerText: {
 		color: colors.red,
