@@ -4,7 +4,7 @@ import { TextInput } from "react-native-gesture-handler";
 import SafeAreaView from "react-native-safe-area-view";
 import { connect } from "react-redux";
 import requests from "../../api/requests";
-import logo from "../../assets/images/dark-logo.png";
+import logo from "../../assets/images/logo.png";
 import Text from "../../components/common/CustomText";
 import { colors } from "../../constants";
 import { strings } from "../../locales/strings";

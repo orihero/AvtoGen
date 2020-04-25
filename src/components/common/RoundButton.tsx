@@ -70,14 +70,14 @@ const styles = StyleSheet.create({
 		borderRadius: measures.borderRadius * 3,
 		borderWidth: 1,
 		borderColor: colors.white,
-		margin: 5,
-		shadowOpacity: 0.33,
-		shadowColor: colors.extraGray,
-		shadowOffset: {
-			width: 0,
-			height: 5
-		},
-		elevation: 2
+		margin: 5
+		// shadowOpacity: 0.33,
+		// shadowColor: colors.extraGray,
+		// shadowOffset: {
+		// 	width: 0,
+		// 	height: 5
+		// },
+		// elevation: 2
 	},
 	full: {
 		justifyContent: "center",

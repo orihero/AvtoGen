@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-	View,
-	Text,
-	StyleSheet,
+	Animated,
+	Dimensions,
 	Image,
 	ScrollView,
-	Dimensions,
-	StatusBar,
-	Animated
+	StyleSheet,
+	Text,
+	View
 } from "react-native";
-import { measures, colors } from "../../constants/index";
-import LogoWithText from "../../components/LogoWithText";
-import { commonStyles } from "../../constants/commonStyles";
+import { Login } from ".";
 import logo1 from "../../assets/images/first-slider.png";
 import logo2 from "../../assets/images/second-slider.png";
 import logo3 from "../../assets/images/third-slider.png";
-import RoundButton from "../../components/common/RoundButton";
-import { strings } from "../../locales/strings";
-import CustomMap from "../map/MapView";
-import Prompt from "./Prompt";
+import LogoWithText from "../../components/LogoWithText";
+import { commonStyles } from "../../constants/commonStyles";
+import { colors, measures } from "../../constants/index";
 
 interface SliderProps {
 	sliders: SliderData[];
@@ -150,7 +146,7 @@ const Slider = ({ sliders = data, navigation }: SliderProps) => {
 					);
 				})}
 				<View style={{ width }}>
-					<Prompt navigation={navigation} />
+					<Login navigation={navigation} />
 				</View>
 			</ScrollView>
 			<Pagination value={value} count={sliders.length} />

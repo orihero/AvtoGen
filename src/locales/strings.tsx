@@ -10,7 +10,7 @@ export let strings = new LocalizedStrings({
 		enter: "Войти в систему",
 		authorize: "Зарегестрироваться",
 		findCarWash: "Найти авто мойку",
-		searchCarWash: "Поиск авто мойку",
+		searchCarWash: "Поиск автомоек",
 		selectAuto: "Выбрать автомобиль",
 		selectService: "Выбрать услугу",
 		selectTime: "Выбрать дату",

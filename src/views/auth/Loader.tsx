@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import React, { useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
-import logo from "../../assets/images/logo-light.png";
+import logo from "../../assets/images/logo.png";
 import { colors } from "../../constants";
 import { strings } from "../../locales/strings";
 import { userLoaded, orderLoaded } from "../../redux/actions";
@@ -81,11 +81,11 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: colors.accent
+		backgroundColor: colors.white
 	},
 	logo: {
 		width: 200,
-		height: 200 / 1.19
+		height: 200 / 1.24
 	}
 });
 
@@ -96,4 +96,7 @@ const mapDispatchToProps = {
 	orderLoaded
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Loader);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Loader);

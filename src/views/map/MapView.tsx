@@ -335,18 +335,17 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	});
 
 	let allFieldsFilled = () => {
-		let process = 1;
-
+		console.warn({ process });
 		if (data[0] === -1) {
-			process -= 0.33;
+			return false;
 		}
 		if (Object.keys(data[1]).length <= 0) {
-			process -= 0.33;
+			return false;
 		}
 		if (data[2] === "") {
-			process -= 0.34;
+			return false;
 		}
-		return process;
+		return true;
 	};
 
 	let renderDefaultMarker = (e, i) => {
@@ -462,8 +461,9 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 										latitudeDelta: 0.1,
 										longitudeDelta: 0.1
 									});
-									setactiveMarker(i);
-									setCardVisible(false);
+									if (allFieldsFilled()) {
+										setactiveMarker(i);
+									}
 								}}
 							>
 								{activeMarker === i && subscribed && (
