@@ -1,14 +1,9 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Dimensions, Platform } from "react-native";
-import AutoFilterContainer from "./AutoFilterContainer";
-import WheelPicker from "./WheelPicker";
-import AutoFilter from "./AutoFilter";
-import {
-	ScrollView,
-	TouchableWithoutFeedback
-} from "react-native-gesture-handler";
-import RoundCheckbox from "../../components/common/RoundCheckbox";
+import React, { useEffect } from "react";
+import { Dimensions, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
+import AutoFilter from "./AutoFilter";
+import WheelPicker from "./WheelPicker";
 
 const {
 	event,
@@ -37,6 +32,9 @@ const CardContent = ({
 	data,
 	setData
 }) => {
+	useEffect(() => {
+		proceed(1);
+	}, [data[0]]);
 	let onChange = (index, value) => {
 		if (value !== undefined) {
 			setData({ ...data, [1]: { ...data["1"], [index]: value } });
@@ -44,7 +42,6 @@ const CardContent = ({
 		}
 
 		setData({ ...data, [0]: index });
-		proceed(1);
 	};
 	return (
 		<View style={{ flex: 1 }}>

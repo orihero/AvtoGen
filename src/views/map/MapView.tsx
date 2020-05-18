@@ -23,10 +23,19 @@ import { colors } from "../../constants";
 import { strings } from "../../locales/strings";
 import { orderLoaded } from "../../redux/actions";
 import { openInMaps } from "../../utils/maps";
-import { channel } from "../../utils/NotificationService";
 import { warnUser } from "../../utils/warn";
 import CustomCard from "./CustomCard";
 import FoundCard from "./FoundCard";
+import RNAndroidLocationEnabler from "react-native-android-location-enabler";
+import LottieView from "lottie-react-native";
+import animation from "../../assets/lottie/animation.json";
+import {
+	PulseIndicator,
+	BallIndicator,
+	WaveIndicator as Indicator,
+	SkypeIndicator,
+	UIActivityIndicator
+} from "react-native-indicators";
 
 interface Region {
 	latitude: Number;
@@ -52,6 +61,9 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	const map = useRef(null);
 	const [animation, setAnimation] = useState(new Animated.Value(0));
 	useEffect(() => {
+		if (currentOrder && currentOrder.status === "done") {
+			return;
+		}
 		requests.main.companies().then(res => {
 			setMarkers(res.data.data);
 			if (currentOrder) {
@@ -66,6 +78,9 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 		requestPermissions();
 	}, []);
 	useEffect(() => {
+		if (currentOrder && currentOrder.status === "done") {
+			return;
+		}
 		if (!!currentOrder) {
 			//* Clear all possible animations!
 			// setSubscribed(false);
@@ -93,11 +108,13 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	};
 
 	useEffect(() => {
+		if (currentOrder && currentOrder.status === "done") {
+			return;
+		}
 		if (subscribed) {
 			let index = markers.findIndex(
 				e => e.id === currentOrder.company.id
 			);
-			currentOrder;
 			setactiveMarker(index);
 			setMessage(strings.waiting);
 			animate();
@@ -105,6 +122,18 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	}, [subscribed]);
 
 	let onMapReady = () => {
+		if (currentOrder && currentOrder.status === "done") {
+			return;
+		}
+		Geolocation.getCurrentPosition(
+			({ coords: { longitude, latitude } }) => {
+				setUserLocation({
+					longitude,
+					latitude
+				});
+			},
+			err => console.warn("REJECTED: ", err)
+		);
 		LayoutAnimation.configureNext(
 			LayoutAnimation.create(
 				500,
@@ -115,24 +144,49 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 		if (!currentOrder) {
 			setCardVisible(true);
 		}
-		Geolocation.getCurrentPosition(
-			({ coords: { longitude, latitude } }) => {
-				setUserLocation({ longitude, latitude });
-			},
-			err => console.warn("REJECTED: ", err)
-		);
 	};
 
 	let requestPermissions = () => {
 		if (Platform.OS !== "android") {
 			return;
 		}
+
+		RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+			interval: 1000,
+			fastInterval: 500
+		})
+			.then(data => {
+				Geolocation.getCurrentPosition(
+					({ coords: { longitude, latitude } }) => {
+						setUserLocation({
+							longitude,
+							latitude
+						});
+					},
+					err => console.warn("REJECTED: ", err)
+				);
+				// The user has accepted to enable the location services
+				// data can be :
+				//  - "already-enabled" if the location services has been already enabled
+				//  - "enabled" if user has clicked on OK button in the popup
+			})
+			.catch(err => {
+				// The user has not accepted to enable the location services or something went wrong during the process
+				// "err" : { "code" : "ERR00|ERR01|ERR02", "message" : "message"}
+				// codes :
+				//  - ERR00 : The user has clicked on Cancel button in the popup
+				//  - ERR01 : If the Settings change are unavailable
+				//  - ERR02 : If the popup has failed to open
+			});
+
 		PermissionsAndroid.request("android.permission.ACCESS_FINE_LOCATION")
 			.then(res => {})
 			.catch(res => {
-				console.warn("REJECTED: ", res);
+				console.log("REJECTED: ", res);
 			});
 	};
+
+	let lottie = React.createRef();
 
 	let drawRoute = () => {
 		// setShowRoute(true);
@@ -162,7 +216,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	};
 
 	let subscribe = () => {
-		if (typeof data[0] !== "boolean" || !data[1]) {
+		if (typeof data[0] !== "number" || typeof data[1] !== "object") {
 			setCardVisible(true);
 			setactiveMarker(-1);
 			warnUser(strings.selectAuto);
@@ -178,7 +232,6 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			company_id: current.id,
 			time: data["2"]
 		};
-		console.warn(postData.time);
 		requests.main
 			.book(postData)
 			.then(res => {
@@ -312,7 +365,14 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 				console.warn(response);
 			})
 			.finally(() => {
-				if (map && markers && markers.length > 0) {
+				if (
+					map &&
+					markers &&
+					markers.length > 0 &&
+					userLocation &&
+					!!userLocation.longitude &&
+					!!userLocation.latitude
+				) {
 					map.current.animateToRegion({
 						...userLocation,
 						latitudeDelta: 0.1,
@@ -397,6 +457,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 					});
 					if (allFieldsFilled()) {
 						setactiveMarker(i);
+						setCardVisible(false);
 					}
 				}}
 				title={e.title}
@@ -408,6 +469,12 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			/>
 		);
 	};
+
+	useEffect(() => {
+		if (currentOrder && lottie && lottie.current) {
+			lottie.current.play();
+		}
+	}, [activeMarker]);
 
 	return (
 		<View style={styles.container}>
@@ -445,8 +512,8 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 								style={{
 									overflow: "visible",
 									justifyContent: "center",
-									width: 80,
-									height: 80,
+									width: 120,
+									height: 120,
 									alignItems: "center"
 								}}
 								onPress={() => {
@@ -465,20 +532,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 									}
 								}}
 							>
-								{activeMarker === i && subscribed && (
-									<Animated.View
-										style={[
-											styles.animationBase,
-											{
-												width,
-												height: width,
-												opacity,
-												position: "absolute",
-												alignSelf: "center"
-											}
-										]}
-									/>
-								)}
+								<Indicator size={120} color={colors.yellow} />
 								<Image
 									source={
 										activeMarker === i
@@ -490,7 +544,8 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 										height:
 											activeMarker === i
 												? iconSize / 0.83
-												: iconSize / 0.75
+												: iconSize / 0.75,
+										position: "absolute"
 									}}
 								/>
 							</Marker>

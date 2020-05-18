@@ -17,6 +17,18 @@ import { strings } from "../../locales/strings";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import Text from "../../components/common/CustomText";
 import Rating from "../../components/Rating";
+import requests from "../../api/requests";
+
+let weekDays = [
+	"Воскресенье",
+	"Понедельник",
+	"Вторник",
+	"Среда",
+	"Четверг",
+	"Пятница",
+	"Суббота"
+];
+
 const FoundCard = ({
 	subscribe,
 	current: parent,
@@ -34,6 +46,8 @@ const FoundCard = ({
 	}
 	const [expanded, setExpanded] = useState(false);
 	const [subscribed, setSubscribed] = useState(false);
+	const [rating, setRating] = useState(3);
+	const [comment, setComment] = useState("");
 	let height = new Animated.Value(0);
 	let onGestureEvent = Animated.event([
 		{
@@ -42,6 +56,17 @@ const FoundCard = ({
 			}
 		}
 	]);
+
+	let rate = async () => {
+		try {
+			let res = await requests.main.comment({
+				evaluation: rating,
+				booking_id: current.id,
+				comment
+			});
+		} catch (error) {}
+	};
+
 	let onHandlerStateChange = ({ nativeEvent }) => {
 		if (nativeEvent.oldState === State.ACTIVE) {
 			if (nativeEvent.translationY > 0) {
@@ -60,6 +85,8 @@ const FoundCard = ({
 		}
 	};
 
+	let currentDate = new Date(Date.now());
+
 	let renderContent = () => {
 		if (parent.status === "done") {
 			return (
@@ -77,9 +104,7 @@ const FoundCard = ({
 							<Text style={styles.lightText}>
 								{strings.carWash}
 							</Text>
-							<Text style={styles.nameText}>
-								AVTOritet Car-Wash
-							</Text>
+							<Text style={styles.nameText}>{current.title}</Text>
 							<Text style={styles.thanksText}>
 								{strings.thanks}
 							</Text>
@@ -97,6 +122,8 @@ const FoundCard = ({
 								multiline
 								numberOfLines={2}
 								placeholder={strings.leaveComment}
+								value={comment}
+								onChangeText={e => setComment(e)}
 							/>
 						</View>
 					</ScrollView>
@@ -105,26 +132,34 @@ const FoundCard = ({
 						full
 						text={strings.rate}
 						backgroundColor={colors.yellow}
-						onPress={subscribe}
+						onPress={rate}
 					/>
 				</>
 			);
 		}
 		if (!subscribed && current.services) {
 			let total = 0;
+
 			let services = current.services.reduce((prev, service) => {
 				if (
-					data["1"][service.id] &&
+					data["1"][service.service_id] &&
 					data["0"] === service.car_type_id
 				) {
 					total += service.price;
 					return [...prev, service];
 				} else return prev;
 			}, []);
+			console.log({
+				current: current.schedule
+			});
+			let dayIndex = currentDate.getDay();
 			return (
 				<Animated.ScrollView
 					showsVerticalScrollIndicator={false}
-					style={{ height: contentHeight, maxHeight: 300 }}
+					style={{
+						height: contentHeight,
+						maxHeight: 300
+					}}
 				>
 					<View style={styles.content}>
 						<View style={styles.borderTop}>
@@ -136,7 +171,7 @@ const FoundCard = ({
 									return (
 										<View>
 											<Text style={styles.lightText}>
-												{e.title}
+												{e.service}
 											</Text>
 											<Text
 												style={{
@@ -158,93 +193,116 @@ const FoundCard = ({
 								</Text>
 							</View>
 						</View>
-						<View style={[styles.borderTop, styles.timeWrapper]}>
-							<TouchableWithoutFeedback
-								onPress={() => {
-									LayoutAnimation.configureNext(
-										LayoutAnimation.Presets.easeInEaseOut
-									);
-									setExpanded(!expanded);
-								}}
+						{!!current.schedule && (
+							<View
+								style={[styles.borderTop, styles.timeWrapper]}
 							>
-								<View style={styles.timeHeader}>
-									<View style={styles.twoBorder}>
-										<Text
-											style={[
-												styles.timeText,
-												styles.bold
-											]}
-										>
-											Суббота
-										</Text>
-										<Text
-											style={[
-												styles.timeText,
-												styles.bold
-											]}
-										>
-											10:00–22:00
-										</Text>
+								<TouchableWithoutFeedback
+									onPress={() => {
+										LayoutAnimation.configureNext(
+											LayoutAnimation.Presets
+												.easeInEaseOut
+										);
+										setExpanded(!expanded);
+									}}
+								>
+									<View style={styles.timeHeader}>
+										<View style={styles.twoBorder}>
+											<Text
+												style={[
+													styles.timeText,
+													styles.bold
+												]}
+											>
+												{weekDays[dayIndex]}
+											</Text>
+											<Text
+												style={[
+													styles.timeText,
+													styles.bold
+												]}
+											>
+												{current.schedule.alltime[
+													dayIndex
+												] === "1"
+													? strings.allDay
+													: `${
+															current.schedule
+																.time[
+																dayIndex
+															][0]
+													  } - ${
+															current.schedule
+																.time[
+																dayIndex
+															][1]
+													  }`}
+											</Text>
+										</View>
+										<Icons
+											name="down-chevron"
+											style={{
+												transform: [
+													{
+														rotate: expanded
+															? "180deg"
+															: "0deg"
+													}
+												]
+											}}
+										/>
 									</View>
-									<Icons
-										name="down-chevron"
-										style={{
-											transform: [
-												{
-													rotate: expanded
-														? "180deg"
-														: "0deg"
-												}
-											]
-										}}
-									/>
-								</View>
-							</TouchableWithoutFeedback>
-							{expanded && (
-								<View>
-									<View style={styles.twoBorder}>
-										<Text style={styles.timeText}>
-											Среда
-										</Text>
-										<Text style={styles.timeText}>
-											10:00–22:00
-										</Text>
+								</TouchableWithoutFeedback>
+								{expanded && (
+									<View>
+										{current.schedule.alltime.map(
+											(day, i) => {
+												console.log(
+													current.schedule.time[i]
+												);
+
+												return (
+													<View
+														style={styles.twoBorder}
+													>
+														<Text
+															style={
+																styles.timeText
+															}
+														>
+															{weekDays[i]}
+														</Text>
+														<Text
+															style={
+																styles.timeText
+															}
+														>
+															{current.schedule
+																.alltime[i] ===
+															"0"
+																? `${
+																		current
+																			.schedule
+																			.time[
+																			i
+																		][0]
+																  } - ${
+																		current
+																			.schedule
+																			.time[
+																			i
+																		][1]
+																  }`
+																: strings.allDay}
+														</Text>
+													</View>
+												);
+											}
+										)}
 									</View>
-									<View style={styles.twoBorder}>
-										<Text style={styles.timeText}>
-											Четверг
-										</Text>
-										<Text style={styles.timeText}>
-											10:00–22:00
-										</Text>
-									</View>
-									<View style={styles.twoBorder}>
-										<Text style={styles.timeText}>
-											Пятница
-										</Text>
-										<Text style={styles.timeText}>
-											10:00–22:00
-										</Text>
-									</View>
-									<View style={styles.twoBorder}>
-										<Text style={styles.timeText}>
-											Суббота
-										</Text>
-										<Text style={styles.timeText}>
-											10:00–22:00
-										</Text>
-									</View>
-									<View style={styles.twoBorder}>
-										<Text style={styles.timeText}>
-											Воскресенье
-										</Text>
-										<Text style={styles.timeText}>
-											10:00–22:00
-										</Text>
-									</View>
-								</View>
-							)}
-						</View>
+								)}
+							</View>
+						)}
 						<View style={styles.borderTop}>
 							<Text style={styles.mainText}>Рейтинг 4.5</Text>
 						</View>

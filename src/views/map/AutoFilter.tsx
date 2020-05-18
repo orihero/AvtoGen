@@ -40,15 +40,7 @@ let AutoFilter = ({
 			}
 		>
 			<View style={[styles.autoFilterContainer]}>
-				{icon && (
-					// <Icons
-					//   name={icon}
-					//   style={{ width: 90 }}
-					//   size={24 + index}
-					//   color={colors.accent}
-					// />
-					<Image source={{ uri: icon }} style={styles.icon} />
-				)}
+				{icon && <Image source={{ uri: icon }} style={styles.icon} />}
 				<View style={styles.fill}>
 					<Text
 						style={{

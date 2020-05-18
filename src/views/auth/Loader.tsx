@@ -48,7 +48,6 @@ const Loader = ({ navigation, userLoaded, orderLoaded }) => {
 			let res = await requests.user.show();
 			if (
 				res.data.data.latest_book &&
-				res.data.data.latest_book.status !== "done" &&
 				res.data.data.latest_book.status !== "canceled"
 			) {
 				let orders = await requests.main.books(

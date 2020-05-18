@@ -10,6 +10,7 @@ import { colors } from "../../constants";
 import { strings } from "../../locales/strings";
 import { userLoggedIn } from "../../redux/actions";
 import RoundButton from "../../components/common/RoundButton";
+import NotificationService from "../../utils/NotificationService";
 
 let buttons = [
 	Array.from({ length: 3 }, (v, k) => k + 1),
@@ -75,6 +76,7 @@ const Login = ({ navigation, userLoggedIn }) => {
 			.verifyCode(data.user_id, { code })
 			.then(res => {
 				userLoggedIn(res.data.data);
+				NotificationService.init();
 				navigation.navigate("SelectLanguage");
 			})
 			.catch(res => {

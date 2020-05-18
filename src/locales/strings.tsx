@@ -69,7 +69,8 @@ export let strings = new LocalizedStrings({
 		appName: "Avtogen",
 		youAreSubscribed: "Вы записаны через 1 минут на автомойку",
 		acceptAgreement: "Нажимая кнопку «Продолжить» я принимаю условия ",
-		pravicyAgreemnt: "Пользовательского соглашения"
+		pravicyAgreemnt: "Пользовательского соглашения",
+		allDay: "Круглосуточно"
 	},
 	en: {
 		firstSlider: "Ручная мойка кузова нано шампунем",
