@@ -46,19 +46,21 @@ const WheelPicker = ({ setData }) => {
 		hour = pickerData.selectedHour,
 		minute = pickerData.selectedMinute
 	}) => {
-		let dayInTime = dayIndex === 1 ? 24 * 60 * 60 * 1000 : 0;
+		let dayInTime = dayIndex * 24 * 60 * 60 * 1000;
 		let date = new Date(Date.now() + dayInTime);
 		let isFirst = hour === date.getHours() + 1 && minute === 0;
-		if (!isFirst)
-			setData(
-				`${date.getFullYear()}-${
-					date.getMonth() < 10
-						? "0" + (date.getMonth() + 1).toString()
-						: date.getMonth() + 1
-				}-${
-					date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
-				} ${hour}:${minute}`
-			);
+		let newHour = hour < 10 ? "0" + hour.toString() : hour;
+		let newMinute = minute < 10 ? "0" + minute.toString() : minute;
+		if (!isFirst) {
+			let stringifiedData = `${date.getFullYear()}-${
+				date.getMonth() < 10
+					? "0" + (date.getMonth() + 1).toString()
+					: date.getMonth() + 1
+			}-${
+				date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
+			} ${newHour}:${newMinute}`;
+			setData(stringifiedData);
+		}
 	};
 
 	useEffect(() => {

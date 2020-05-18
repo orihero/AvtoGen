@@ -46,6 +46,8 @@ const Loader = ({ navigation, userLoaded, orderLoaded }) => {
 		//* Check if the user has the active booking
 		try {
 			let res = await requests.user.show();
+			console.log(res.data.data.latest_book);
+
 			if (
 				res.data.data.latest_book &&
 				res.data.data.latest_book.status !== "canceled"
@@ -53,12 +55,14 @@ const Loader = ({ navigation, userLoaded, orderLoaded }) => {
 				let orders = await requests.main.books(
 					res.data.data.latest_book.status
 				);
-				orderLoaded({
-					name: "current",
-					data: orders.data.data.find(
-						e => e.id === res.data.data.latest_book.id
-					)
-				});
+				let data = orders.data.data.find(
+					e => e.id === res.data.data.latest_book.id
+				);
+				if (!data.comment)
+					orderLoaded({
+						name: "current",
+						data
+					});
 			}
 		} catch (error) {
 			console.warn(error.response);

@@ -17,7 +17,6 @@ import { strings } from "../../locales/strings";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import Text from "../../components/common/CustomText";
 import Rating from "../../components/Rating";
-import requests from "../../api/requests";
 
 let weekDays = [
 	"Воскресенье",
@@ -37,7 +36,8 @@ const FoundCard = ({
 	buttonsEnabled,
 	cancel,
 	arrived,
-	renderButtons
+	renderButtons,
+	rate
 }) => {
 	let current = parent.company ? parent.company : parent;
 	let isExpanded = false;
@@ -56,16 +56,6 @@ const FoundCard = ({
 			}
 		}
 	]);
-
-	let rate = async () => {
-		try {
-			let res = await requests.main.comment({
-				evaluation: rating,
-				booking_id: current.id,
-				comment
-			});
-		} catch (error) {}
-	};
 
 	let onHandlerStateChange = ({ nativeEvent }) => {
 		if (nativeEvent.oldState === State.ACTIVE) {
@@ -132,7 +122,7 @@ const FoundCard = ({
 						full
 						text={strings.rate}
 						backgroundColor={colors.yellow}
-						onPress={rate}
+						onPress={() => rate(rating, comment)}
 					/>
 				</>
 			);

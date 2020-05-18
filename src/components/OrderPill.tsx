@@ -26,18 +26,18 @@ export const properties = [
 	{
 		title: "Дата посещения",
 		rightText: "16:35",
-		description: "03.12.2019",
+		description: "03.12.2019"
 	},
 	{
 		title: "Тип автомобиля",
 		icon: "light",
-		description: "Легковой",
+		description: "Легковой"
 	},
 	{
 		title: "Тип услуги",
-		description: "Бесконтактная мойка кузова автомобиля, коврики пороги",
+		description: "Бесконтактная мойка кузова автомобиля, коврики пороги"
 	},
-	{ title: "Цена уcлуги", price: "40 000 сум" },
+	{ title: "Цена уcлуги", price: "40 000 сум" }
 ];
 
 let { width, height } = Dimensions.get("window");
@@ -45,7 +45,7 @@ let { width, height } = Dimensions.get("window");
 const OrderPill = ({
 	item,
 	collapsed,
-	navigation,
+	navigation
 }: OrderProps & NavigationProps) => {
 	let [cardOn, setCardOn] = useState(false);
 	useEffect(() => {
@@ -55,17 +55,19 @@ const OrderPill = ({
 	let onStart = () => {
 		navigation.navigate("Details", { item });
 	};
+	// console.log(item);
+
 	return (
 		<View
 			style={[
 				styles.container,
 				{
-					height: cardOn ? 100 : null,
-				},
+					height: cardOn ? 100 : null
+				}
 			]}
 		>
 			<UserInfo
-				user={item.user}
+				user={item.company}
 				toggleCard={setCardOn}
 				cardVisibility={cardOn}
 			/>
@@ -95,10 +97,6 @@ const OrderPill = ({
 							: properties[1].description
 					}
 				/>
-				{/* <Property
-                title={properties[2].title}
-                description={properties[2].description}
-                /> */}
 				<Property
 					title={strings.typeOfService}
 					description={
@@ -108,6 +106,22 @@ const OrderPill = ({
 						}, "")
 					}
 				/>
+				<Property
+					title={strings.status}
+					rightText={strings[item.status]}
+				/>
+				{!!item.comment && (
+					<>
+						<Property
+							title={strings.rating}
+							rightText={item.comment.evaluation}
+						/>
+						<Property
+							title={strings.comment}
+							description={item.comment.comment}
+						/>
+					</>
+				)}
 				<View style={styles.row}>
 					<Property
 						title={properties[3].title}
@@ -117,24 +131,6 @@ const OrderPill = ({
 								: properties[3].price
 						}
 					/>
-					{item.status === "arrived" && (
-						<RoundButton
-							fill
-							full
-							text={strings.start}
-							onPress={onStart}
-							backgroundColor={colors.yellow}
-						/>
-					)}
-					{item.status === "processing" && (
-						<RoundButton
-							fill
-							full
-							text={strings.finish}
-							onPress={onStart}
-							backgroundColor={colors.yellow}
-						/>
-					)}
 				</View>
 			</ScrollView>
 		</View>
@@ -150,7 +146,7 @@ const styles = StyleSheet.create({
 		borderRadius: 15,
 		paddingHorizontal: 30,
 		paddingVertical: 15,
-		marginVertical: 7.5,
+		marginVertical: 7.5
 		// height: 111,
 	},
 	indicator: {
@@ -158,13 +154,13 @@ const styles = StyleSheet.create({
 		height: 4,
 		borderRadius: 5,
 		backgroundColor: colors.ultrLightBlue,
-		marginTop: 10,
+		marginTop: 10
 	},
 	properties: {},
 	row: {
 		flexDirection: "row",
-		justifyContent: "space-between",
-	},
+		justifyContent: "space-between"
+	}
 });
 
 export default withNavigation(OrderPill);

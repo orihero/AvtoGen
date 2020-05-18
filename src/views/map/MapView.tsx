@@ -199,6 +199,20 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 		});
 	};
 
+	let rate = async (rating, comment) => {
+		try {
+			console.log({ rating, comment });
+
+			let res = await requests.main.comment({
+				evaluation: rating,
+				booking_id: currentOrder.id,
+				comment
+			});
+			console.log(res.data);
+			orderLoaded({ name: "current", data: null });
+		} catch (error) {}
+	};
+
 	let cancel = async () => {
 		setMessage(null);
 		setShowRoute(false);
@@ -298,6 +312,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 							: currentOrder
 					}
 					subscribe={subscribe}
+					rate={rate}
 				/>
 			);
 		return null;

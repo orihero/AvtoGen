@@ -70,7 +70,14 @@ export let strings = new LocalizedStrings({
 		youAreSubscribed: "Вы записаны через 1 минут на автомойку",
 		acceptAgreement: "Нажимая кнопку «Продолжить» я принимаю условия ",
 		pravicyAgreemnt: "Пользовательского соглашения",
-		allDay: "Круглосуточно"
+		allDay: "Круглосуточно",
+		status: "Статус",
+		new: "Новый",
+		accepted: "Принятый",
+		canceled: "Отменен",
+		done: "Законченный",
+		rating: "Рейтинг",
+		comment: "Комментарий"
 	},
 	en: {
 		firstSlider: "Ручная мойка кузова нано шампунем",
