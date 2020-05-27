@@ -42,13 +42,11 @@ const Login = ({ navigation, userLoggedIn }) => {
 		requests.auth
 			.login({ phone: value.substr(1, value.length) })
 			.then(res => {
-				console.warn(res.data.data);
 				setData(res.data.data);
 			})
 			.catch(res => {
-				console.warn(res.response);
 				if (!res.response) {
-					console.warn(res.response);
+					console.log(res);
 					setError(strings.connectionError);
 					return;
 				}
@@ -66,38 +64,87 @@ const Login = ({ navigation, userLoggedIn }) => {
 		setConfirmed(!confirmed);
 	};
 
-	let confirmCode = () => {
+	let confirmCode = async () => {
 		if (code.length < 5) {
 			setError(strings.fillAllFields);
 			return;
 		}
 		setLoading(true);
-		requests.auth
-			.verifyCode(data.user_id, { code })
-			.then(res => {
-				userLoggedIn(res.data.data);
-				NotificationService.init();
-				navigation.navigate("SelectLanguage");
-			})
-			.catch(res => {
-				console.warn(res.response);
-				if (!res.response) {
-					console.warn(res.response);
-					setError(strings.connectionError);
-					return;
+		try {
+			let res = await requests.auth.verifyCode(data.user_id, {
+				code
+			});
+			userLoggedIn(res.data.data);
+			NotificationService.init();
+			let tempToken = await NotificationService.getFcmToken();
+			if (tempToken) {
+				try {
+					let r = await requests.profile.setToken({
+						fcm_token: tempToken
+					});
+				} catch (error) {
+					console.log(error);
 				}
-				let { response } = res;
-				if (response.data) {
-					setError(
-						response.data.message
-							? response.data.message
-							: strings.somethingWentWrong
-					);
-					return;
-				}
-				setError(strings.somethingWentWrong);
-			})
-			.finally(() => setLoading(false));
+			}
+			navigation.navigate("SelectLanguage");
+		} catch (res) {
+			console.log(res);
+
+			if (!res.response) {
+				setError(strings.connectionError);
+				return;
+			}
+			let { response } = res;
+			if (response.data) {
+				setError(
+					response.data.message
+						? response.data.message
+						: strings.somethingWentWrong
+				);
+				return;
+			}
+			setError(strings.somethingWentWrong);
+		} finally {
+			setLoading(false);
+		}
+		// requests.auth
+		// 	.verifyCode(data.user_id, { code })
+		// 	.then(res => {
+		// 		userLoggedIn(res.data.data);
+		// 		NotificationService.init();
+		// 		let tempToken = await NotificationService.getFcmToken();
+		// 		if (tempToken) {
+		// 			try {
+		// 				let res = await requests.profile.setToken({
+		// 					fcm_token: tempToken
+		// 				});
+		// 			} catch (error) {
+		// 				console.warn(error.response);
+		// 				navigation.navigate("PromptStack");
+		// 				return;
+		// 			}
+		// 		}
+		// 		navigation.navigate("SelectLanguage");
+		// 	})
+		// 	.catch(res => {
+		// 		console.warn(res.response);
+		// 		if (!res.response) {
+		// 			console.warn(res.response);
+		// 			setError(strings.connectionError);
+		// 			return;
+		// 		}
+		// 		let { response } = res;
+		// 		if (response.data) {
+		// 			setError(
+		// 				response.data.message
+		// 					? response.data.message
+		// 					: strings.somethingWentWrong
+		// 			);
+		// 			return;
+		// 		}
+		// 		setError(strings.somethingWentWrong);
+		// 	})
+		// 	.finally(() => setLoading(false));
 	};
 
 	useEffect(() => {
