@@ -17,6 +17,7 @@ import { strings } from "../../locales/strings";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import Text from "../../components/common/CustomText";
 import Rating from "../../components/Rating";
+import { connect } from "react-redux";
 
 let weekDays = [
 	"Воскресенье",
@@ -37,9 +38,10 @@ const FoundCard = ({
 	cancel,
 	arrived,
 	renderButtons,
-	rate
+	rate,
+	currentOrder
 }) => {
-	let current = parent.company ? parent.company : parent;
+	let current = parent && parent.company ? parent.company : parent;
 	let isExpanded = true;
 	if (!current) {
 		return null;
@@ -78,7 +80,9 @@ const FoundCard = ({
 	let currentDate = new Date(Date.now());
 
 	let renderContent = () => {
-		if (parent.status === "done") {
+		console.log({ status: parent.status });
+
+		if (currentOrder && currentOrder.status === "done") {
 			return (
 				<>
 					<ScrollView showsVerticalScrollIndicator={false}>
@@ -88,7 +92,9 @@ const FoundCard = ({
 									name="check"
 									size={40}
 									color={colors.white}
-									style={{ transform: [{ translateY: 3 }] }}
+									style={{
+										transform: [{ translateY: 3 }]
+									}}
 								/>
 							</View>
 							<Text style={styles.lightText}>
@@ -139,9 +145,6 @@ const FoundCard = ({
 					return [...prev, service];
 				} else return prev;
 			}, []);
-			console.log({
-				current: current.schedule
-			});
 			let dayIndex = currentDate.getDay();
 			return (
 				<Animated.ScrollView
@@ -247,10 +250,6 @@ const FoundCard = ({
 									<View>
 										{current.schedule.alltime.map(
 											(day, i) => {
-												console.log(
-													current.schedule.time[i]
-												);
-
 												return (
 													<View
 														style={styles.twoBorder}
@@ -540,4 +539,6 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default FoundCard;
+export default connect(({ order: { current: currentOrder } }) => ({
+	currentOrder
+}))(FoundCard);

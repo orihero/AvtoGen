@@ -98,8 +98,8 @@ let changeValueAt = (source, value, index) => {
 };
 
 const CustomCard = ({ onSubmit, data, setData, loading }: CustomCardProps) => {
-	const [active, setActive] = useState(-1);
-	const [childStates, setChildStates] = useState("00");
+	const [active, setActive] = useState(0);
+	const [childStates, setChildStates] = useState("100");
 	const [services, setServices] = useState([]);
 	const [carTypes, setCarTypes] = useState([]);
 

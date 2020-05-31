@@ -17,10 +17,10 @@ export enum NotificationActionTypes {
 	NewCall = "new_call",
 	CallCancelled = "call_canceled",
 	DriverArrived = "call_almost_arrived",
-	CallCompleted = "call_completed",
+	CallCompleted = "call_completed"
 }
 
-let notificationConsumer = async (notification) => {
+let notificationConsumer = async notification => {
 	switch (notification.data.actionType) {
 		case "accepted": {
 			try {
@@ -37,8 +37,23 @@ let notificationConsumer = async (notification) => {
 			return;
 		}
 		default:
-			console.warn("UNHANDLED ACTION");
-			console.warn(notification.data);
+			try {
+				let { data } = await requests.main.books("done");
+				let currentOrder =
+					data.data && data.data.length > 0 ? data.data[0] : null;
+				console.log({ currentOrder });
+				store.dispatch(
+					orderLoaded({
+						name: "current",
+						data: currentOrder
+					})
+				);
+			} catch (error) {
+				if (!error.response) console.warn(error);
+				else {
+					console.warn(error.response);
+				}
+			}
 			break;
 	}
 };
@@ -55,10 +70,10 @@ function init() {
 	createNotificationListeners(channelId);
 }
 
-const createNotificationListeners = async (channelId) => {
+const createNotificationListeners = async channelId => {
 	try {
 		let notifications = firebase.notifications();
-		notifications.onNotification(async (notification) => {
+		notifications.onNotification(async notification => {
 			notification.android.setChannelId(channelId).setSound("default");
 			firebase.notifications().displayNotification(notification);
 			if (AppState.currentState.match(/active/)) {
@@ -66,7 +81,7 @@ const createNotificationListeners = async (channelId) => {
 				clearBadge();
 			}
 		});
-		notifications.onNotificationOpened(async (notification) => {
+		notifications.onNotificationOpened(async notification => {
 			notificationConsumer(notification);
 			clearBadge();
 		});
@@ -119,7 +134,7 @@ const requestPermission = async () => {
 	}
 };
 
-const backgroundPushes = async (message) => {
+const backgroundPushes = async message => {
 	if (AppState.currentState.match(/active/)) {
 		return Promise.resolve();
 	}

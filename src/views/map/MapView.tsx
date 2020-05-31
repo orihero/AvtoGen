@@ -10,7 +10,9 @@ import {
 	StyleSheet,
 	View
 } from "react-native";
+import RNAndroidLocationEnabler from "react-native-android-location-enabler";
 import firebase from "react-native-firebase";
+import { WaveIndicator as Indicator } from "react-native-indicators";
 import MapView, { Marker } from "react-native-maps";
 import MapsWithDirection from "react-native-maps-directions";
 import { connect } from "react-redux";
@@ -26,16 +28,6 @@ import { openInMaps } from "../../utils/maps";
 import { warnUser } from "../../utils/warn";
 import CustomCard from "./CustomCard";
 import FoundCard from "./FoundCard";
-import RNAndroidLocationEnabler from "react-native-android-location-enabler";
-import LottieView from "lottie-react-native";
-import animation from "../../assets/lottie/animation.json";
-import {
-	PulseIndicator,
-	BallIndicator,
-	WaveIndicator as Indicator,
-	SkypeIndicator,
-	UIActivityIndicator
-} from "react-native-indicators";
 
 interface Region {
 	latitude: Number;
@@ -79,6 +71,8 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	}, []);
 	useEffect(() => {
 		if (currentOrder && currentOrder.status === "done") {
+			console.log("CURRENT ORDER CHANGED TO ", currentOrder);
+			setMessage(null);
 			return;
 		}
 		if (!!currentOrder) {
@@ -210,15 +204,9 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			orderLoaded({ name: "current", data: null });
 			requests.main.companies().then(res => {
 				setMarkers(res.data.data);
-				if (currentOrder) {
-					animation.stopAnimation();
-					let index = res.data.data.findIndex(
-						e => e.id === currentOrder.company.id
-					);
-					setactiveMarker(index);
-					animate();
-				}
 			});
+			setactiveMarker(-1);
+			setCardVisible(true);
 		} catch (error) {}
 	};
 
@@ -233,9 +221,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 			setMessage(null);
 			setactiveMarker(-1);
 			orderLoaded({ name: "current", data: null });
-		} catch (error) {
-			console.warn(error);
-		}
+		} catch (error) {}
 	};
 
 	let subscribe = () => {
@@ -310,7 +296,7 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 					arrived={arrived}
 					cancel={cancel}
 					renderButtons={
-						!currentOrder || currentOrder.status !== "arrived"
+						!currentOrder || currentOrder.status !== "done"
 					}
 					buttonsEnabled={!currentOrder}
 					data={data}
@@ -328,6 +314,9 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	};
 
 	let renderRoute = () => {
+		if (!currentOrder) {
+			return null;
+		}
 		let focus = markers[activeMarker] || {
 			longitude: parseFloat(currentOrder.company.location_lng),
 			latitude: parseFloat(currentOrder.company.location_lat)
@@ -581,7 +570,9 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 				text={
 					cardVisible
 						? strings.searchCarWash
-						: currentOrder && !subscribed
+						: currentOrder &&
+						  !subscribed &&
+						  currentOrder.status !== "done"
 						? strings.orderAccepted
 						: `${strings.found} ${markers.length} ${strings.nearby}`
 				}
