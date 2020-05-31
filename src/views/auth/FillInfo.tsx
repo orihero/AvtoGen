@@ -9,7 +9,13 @@ import { connect } from "react-redux";
 import { userLoggedIn } from "../../redux/actions";
 
 const SelectLanguage = ({ navigation, userLoggedIn }) => {
+	let user = navigation.getParam("user");
 	let proceed = () => {
+		if (user) {
+			navigation.navigate("Account");
+			return;
+		}
+
 		navigation.navigate("CustomMap");
 	};
 	let update = () => {
@@ -23,17 +29,25 @@ const SelectLanguage = ({ navigation, userLoggedIn }) => {
 				console.warn(res.response);
 			});
 	};
-	const [data, setData] = useState({ name: "", surname: "" });
+	let initials = user.name.split(" ");
+	console.log({ initials });
+
+	const [data, setData] = useState({
+		name: initials[0] || "",
+		surname: initials[1] || ""
+	});
 	return (
 		<View style={[styles.container]}>
 			<View style={{ flex: 1, justifyContent: "center" }}>
 				<RoundInput
 					onChangeText={e => setData({ ...data, name: e })}
 					placeholder={strings.name}
+					value={data.name}
 				/>
 				<RoundInput
 					onChangeText={e => setData({ ...data, surname: e })}
 					placeholder={strings.surname}
+					value={data.surname}
 				/>
 			</View>
 			<View style={styles.row}>

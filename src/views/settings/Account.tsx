@@ -27,12 +27,16 @@ const Account = ({ navigation, user, userLoggedIn, userLoggedOut }) => {
 		userLoggedOut();
 		navigation.navigate("Login");
 	};
+
+	let onEditPress = () => {
+		navigation.navigate("FillInfo", { user });
+	};
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.content}>
 				<View style={{ flex: 1, justifyContent: "center" }}>
 					<View style={styles.userInfo}>
-						<Avatar image={user.avatar} />
+						<Avatar onEdit={onEditPress} image={user.avatar} />
 						<Text style={styles.nameText}>{user.name}</Text>
 					</View>
 					<View style={styles.contact}>
@@ -134,4 +138,7 @@ const mapDispatchToProps = {
 	userLoggedOut
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Account);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Account);

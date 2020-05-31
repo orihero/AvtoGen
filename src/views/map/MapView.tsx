@@ -202,14 +202,23 @@ const CustomMap = ({ navigation, currentOrder, orderLoaded }) => {
 	let rate = async (rating, comment) => {
 		try {
 			console.log({ rating, comment });
-
 			let res = await requests.main.comment({
 				evaluation: rating,
 				booking_id: currentOrder.id,
 				comment
 			});
-			console.log(res.data);
 			orderLoaded({ name: "current", data: null });
+			requests.main.companies().then(res => {
+				setMarkers(res.data.data);
+				if (currentOrder) {
+					animation.stopAnimation();
+					let index = res.data.data.findIndex(
+						e => e.id === currentOrder.company.id
+					);
+					setactiveMarker(index);
+					animate();
+				}
+			});
 		} catch (error) {}
 	};
 
