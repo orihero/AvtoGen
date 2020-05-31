@@ -40,15 +40,15 @@ const FoundCard = ({
 	rate
 }) => {
 	let current = parent.company ? parent.company : parent;
-	let isExpanded = false;
+	let isExpanded = true;
 	if (!current) {
 		return null;
 	}
-	const [expanded, setExpanded] = useState(false);
+	const [expanded, setExpanded] = useState(true);
 	const [subscribed, setSubscribed] = useState(false);
 	const [rating, setRating] = useState(3);
 	const [comment, setComment] = useState("");
-	let height = new Animated.Value(0);
+	let height = new Animated.Value(-300);
 	let onGestureEvent = Animated.event([
 		{
 			nativeEvent: {
