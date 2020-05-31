@@ -29,12 +29,9 @@ const SelectLanguage = ({ navigation, userLoggedIn }) => {
 				console.warn(res.response);
 			});
 	};
-	let initials = user.name.split(" ");
-	console.log({ initials });
-
 	const [data, setData] = useState({
-		name: initials[0] || "",
-		surname: initials[1] || ""
+		name: "",
+		surname: ""
 	});
 	return (
 		<View style={[styles.container]}>
@@ -42,12 +39,10 @@ const SelectLanguage = ({ navigation, userLoggedIn }) => {
 				<RoundInput
 					onChangeText={e => setData({ ...data, name: e })}
 					placeholder={strings.name}
-					value={data.name}
 				/>
 				<RoundInput
 					onChangeText={e => setData({ ...data, surname: e })}
 					placeholder={strings.surname}
-					value={data.surname}
 				/>
 			</View>
 			<View style={styles.row}>
